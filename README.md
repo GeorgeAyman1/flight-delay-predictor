@@ -40,3 +40,5 @@ Build a supervised classification model that predicts whether a flight will be d
 
 ## Status
 Project setup in progress.
+
+## This project belongs to Data Science course, in Cairo University Faculty of Engnineering
