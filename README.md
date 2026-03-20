@@ -27,11 +27,30 @@ Build a supervised classification model that predicts whether a flight will be d
 - Airport / route metadata
 
 ## Repository Structure
-- `data/` → raw, interim, processed datasets
-- `notebooks/` → exploration notebooks
-- `src/` → reusable source code
-- `tests/` → unit and integration tests
-- `reports/` → figures and tables for report
+flight-delay-predictor/
+├── .github/                 # GitHub workflows
+├── dashboards/              # Dashboards / presentation outputs
+├── data/
+│   ├── raw/                 # Raw input data (kept local, ignored by Git)
+│   ├── interim/             # Intermediate data (kept local, ignored by Git)
+│   └── processed/           # Final processed data (kept local, ignored by Git)
+├── notebooks/               # Jupyter notebooks for exploration
+├── reports/
+│   ├── figures/             # Charts and plots
+│   └── tables/              # Generated tables
+├── src/
+│   ├── data/                # Data acquisition, validation, and merging
+│   ├── features/            # Feature engineering
+│   ├── models/              # Model training / prediction
+│   ├── evaluation/          # Evaluation and metrics
+│   └── utils/               # Utility/helper functions
+├── tests/                   # Tests
+├── .env.example             # Example environment variables
+├── .gitignore               # Ignore rules
+├── Makefile                 # Shortcut commands
+├── pyproject.toml           # Project configuration
+├── poetry.lock              # Dependency lock file
+└── README.md                # Project overview and instructions
 
 ## Git Workflow
 - `main` = stable branch
