@@ -49,3 +49,6 @@ mlruns/
 
 # Logs
 *.log
+
+#Poetry File
+poetry.toml
