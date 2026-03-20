@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "flight-delay-predictor"
+version = "0.1.0"
+description = "Flight delay prediction project"
+authors = ["Team <team@example.com>"]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+pandas = "^3.0.1"
+openpyxl = "^3.1.5"
+pyarrow = "^23.0.1"
+requests = "^2.32.5"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
