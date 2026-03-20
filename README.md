@@ -27,6 +27,7 @@ Build a supervised classification model that predicts whether a flight will be d
 - Airport / route metadata
 
 ## Repository Structure
+```text
 flight-delay-predictor/
 ├── .github/                 # GitHub workflows
 ├── dashboards/              # Dashboards / presentation outputs
@@ -51,13 +52,5 @@ flight-delay-predictor/
 ├── pyproject.toml           # Project configuration
 ├── poetry.lock              # Dependency lock file
 └── README.md                # Project overview and instructions
-
-## Git Workflow
-- `main` = stable branch
-- each member works on a feature branch
-- changes are merged through pull requests
-
-## Status
-Project setup in progress.
-
+```
 ## This project belongs to Data Science course, in Cairo University Faculty of Engnineering
