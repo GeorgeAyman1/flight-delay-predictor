@@ -1,0 +1,161 @@
+=======================================================
+AIRPORTS METADATA VALIDATION REPORT
+Generated: 2026-03-23 07:44:12
+File:      C:\Users\hp\Desktop\Term 7\Data Science\Project\flight-delay-predictor\data\interim\airports.parquet
+Rows:      171
+Columns:   10
+=======================================================
+
+=======================================================
+CHECK 1 — Shape
+=======================================================
+  Rows:    171
+  Columns: 10
+  PASS — row count looks correct
+
+=======================================================
+CHECK 2 — Schema
+=======================================================
+  PASS — all 10 expected columns present
+
+  Column dtypes:
+    airport_code           str
+    airport_name           str
+    city                   str
+    state                  str
+    latitude               float64
+    longitude              float64
+    elevation_ft           float64
+    airport_type           str
+    num_runways            int64
+    timezone               str
+
+=======================================================
+CHECK 3 — Missing values
+=======================================================
+  PASS — no missing values in any column
+
+=======================================================
+CHECK 4 — Duplicates
+=======================================================
+  PASS — no exact duplicate rows
+  PASS — airport_code is unique (primary key valid)
+
+=======================================================
+CHECK 5 — Airport code validity
+=======================================================
+  PASS — all codes are valid 3-letter uppercase IATA format
+  PASS — all 15 origin airports present in table
+
+=======================================================
+CHECK 6 — Coordinate validity
+=======================================================
+  PASS — all latitudes within US bounds (17.0 to 72.0)
+  PASS — all longitudes within US bounds (-180.0 to -60.0)
+
+  Latitude  range: 17.7014  to  64.8151
+  Longitude range: -159.3371  to  -64.8026
+
+=======================================================
+CHECK 7 — Elevation validity
+=======================================================
+  PASS — no null elevations
+  PASS — no negative elevations
+
+  Min elevation:  3 ft
+  Max elevation:  7680 ft
+  Mean elevation: 1066 ft
+
+=======================================================
+CHECK 8 — Airport type distribution
+=======================================================
+  Distribution:
+    large_airport            93  (54.4%)
+    medium_airport           77  (45.0%)
+    small_airport             1  (0.6%)
+  PASS — all airport_type values are valid
+
+=======================================================
+CHECK 9 — Runway counts
+=======================================================
+  PASS — no negative runway counts
+  PASS — all airports have at least 1 runway
+
+  Min runways:  1
+  Max runways:  11
+  Mean runways: 2.8
+
+=======================================================
+CHECK 10 — Timezones
+=======================================================
+  PASS — all airports have a valid IANA timezone
+
+  Timezone distribution:
+    America/New_York                      59
+    America/Chicago                       44
+    America/Los_Angeles                   26
+    America/Denver                        18
+    Pacific/Honolulu                       4
+    America/Detroit                        3
+    America/Sitka                          3
+    America/Puerto_Rico                    3
+    America/Indiana/Indianapolis           2
+    America/Phoenix                        2
+    America/Anchorage                      2
+    America/St_Thomas                      2
+    America/Boise                          1
+    America/Kentucky/Louisville            1
+    America/Juneau                         1
+
+=======================================================
+CHECK 11 — Join coverage
+=======================================================
+  Flight dataset airports:   171
+  Covered by metadata:       171
+  Not covered:               0
+  PASS — metadata covers 100% of flight dataset airports
+
+=======================================================
+CHECK 12 — Descriptive summary
+=======================================================
+  Airport type breakdown:
+    large_airport            93  (54.4%)
+    medium_airport           77  (45.0%)
+    small_airport             1  (0.6%)
+
+  State coverage:
+    Unique states represented: 50
+    Top 5 states by airport count:
+      CA  16
+      FL  14
+      TX  12
+      CO  8
+      NY  7
+
+  Runway statistics:
+    Airports with 1 runway:    19
+    Airports with 2 runways:   62
+    Airports with 3+ runways:  90
+    Most runways: ORD (11 runways)
+
+  Elevation statistics:
+    Highest airport: GUC (7680 ft)
+    Lowest airport:  EYW (3 ft)
+
+  Geographic coverage:
+    Timezone zones covered: 15
+      America/New_York                    59 airports
+      America/Chicago                     44 airports
+      America/Los_Angeles                 26 airports
+      America/Denver                      18 airports
+      Pacific/Honolulu                    4 airports
+      America/Detroit                     3 airports
+      America/Sitka                       3 airports
+      America/Puerto_Rico                 3 airports
+      America/Indiana/Indianapolis        2 airports
+      America/Phoenix                     2 airports
+      America/Anchorage                   2 airports
+      America/St_Thomas                   2 airports
+      America/Boise                       1 airports
+      America/Kentucky/Louisville         1 airports
+      America/Juneau                      1 airports

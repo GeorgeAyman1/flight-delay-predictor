@@ -1,0 +1,94 @@
+=======================================================
+AIRLINES METADATA VALIDATION REPORT
+Generated: 2026-03-23 08:59:34
+File:      C:\Users\hp\Desktop\Term 7\Data Science\Project\flight-delay-predictor\data\interim\airlines.parquet
+Rows:      5
+Columns:   4
+=======================================================
+
+=======================================================
+CHECK 1 — Shape
+=======================================================
+  Rows:    5
+  Columns: 4
+  PASS — exactly 5 rows as expected
+
+=======================================================
+CHECK 2 — Schema
+=======================================================
+  PASS — all 4 expected columns present
+
+  Column dtypes:
+    carrier_code           str
+    carrier_name           str
+    carrier_type           str
+    hub_airports           str
+
+=======================================================
+CHECK 3 — Missing values
+=======================================================
+  PASS — no missing values in any column
+
+=======================================================
+CHECK 4 — Duplicates
+=======================================================
+  PASS — no exact duplicate rows
+  PASS — carrier_code is unique (primary key valid)
+
+=======================================================
+CHECK 5 — Carrier code validity
+=======================================================
+  PASS — all codes are valid 2-character uppercase format
+  PASS — all 5 expected carriers present
+
+=======================================================
+CHECK 6 — Carrier type validity
+=======================================================
+  PASS — all carrier_type values are valid
+
+  Carrier type distribution:
+    Legacy     4
+    Hybrid     1
+
+=======================================================
+CHECK 7 — Hub airports cross-table consistency
+=======================================================
+  Verifying every hub airport exists in airports.parquet ...
+
+  PASS — AA: all 8 hubs found in airports table
+  PASS — AS: all 5 hubs found in airports table
+  PASS — B6: all 5 hubs found in airports table
+  PASS — DL: all 8 hubs found in airports table
+  PASS — UA: all 6 hubs found in airports table
+
+  PASS — all hub airports covered by airports metadata table
+
+=======================================================
+CHECK 8 — Full table display
+=======================================================
+
+  carrier_code : AA
+  carrier_name : American Airlines Inc.
+  carrier_type : Legacy
+  hub_airports : DFW,CLT,MIA,ORD,PHX,JFK,LAX,PHL
+
+  carrier_code : AS
+  carrier_name : Alaska Airlines Inc.
+  carrier_type : Legacy
+  hub_airports : SEA,PDX,SFO,LAX,ANC
+
+  carrier_code : B6
+  carrier_name : JetBlue Airways
+  carrier_type : Hybrid
+  hub_airports : BOS,JFK,FLL,LAX,MCO
+
+  carrier_code : DL
+  carrier_name : Delta Air Lines Inc.
+  carrier_type : Legacy
+  hub_airports : ATL,DTW,MSP,SLC,SEA,BOS,JFK,LAX
+
+  carrier_code : UA
+  carrier_name : United Air Lines Inc.
+  carrier_type : Legacy
+  hub_airports : ORD,EWR,IAH,DEN,SFO,LAX
+
