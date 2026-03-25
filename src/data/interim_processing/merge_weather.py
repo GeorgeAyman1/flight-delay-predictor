@@ -38,4 +38,4 @@ combined_df = pd.concat(dataframes, ignore_index=True)
 # Save result
 combined_df.to_csv(f"{output_path}/weather_combined.csv", index=False)
 
-print("✅ Weather data combined successfully!")
+print("Weather data combined successfully!")

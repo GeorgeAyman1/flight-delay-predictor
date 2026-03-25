@@ -6,9 +6,21 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 STATIONS = [
-    "BOS", "CLT", "DEN", "DFW", "DTW",
-    "EWR", "IAH", "JFK", "MSP", "LAX",
-    "MIA", "ORD", "PHX", "SEA", "SFO",
+    "BOS",
+    "CLT",
+    "DEN",
+    "DFW",
+    "DTW",
+    "EWR",
+    "IAH",
+    "JFK",
+    "MSP",
+    "LAX",
+    "MIA",
+    "ORD",
+    "PHX",
+    "SEA",
+    "SFO",
 ]
 
 YEARS = [2022, 2023, 2024, 2025]
@@ -32,20 +44,26 @@ AIRPORT_TIMEZONES = {
 }
 
 WEATHER_FIELDS = [
-    "tmpf",      # temperature (F)
-    "dwpf",      # dew point (F)
-    "relh",      # relative humidity (%)
-    "drct",      # wind direction
-    "sknt",      # wind speed (knots)
-    "gust",      # wind gust (knots)
-    "p01i",      # precipitation over previous hour (inches)
-    "alti",      # altimeter
-    "mslp",      # mean sea level pressure
-    "vsby",      # visibility
-    "feel",      # apparent temperature
-    "wxcodes",   # weather codes
-    "skyc1", "skyc2", "skyc3", "skyc4",
-    "skyl1", "skyl2", "skyl3", "skyl4",
+    "tmpf",  # temperature (F)
+    "dwpf",  # dew point (F)
+    "relh",  # relative humidity (%)
+    "drct",  # wind direction
+    "sknt",  # wind speed (knots)
+    "gust",  # wind gust (knots)
+    "p01i",  # precipitation over previous hour (inches)
+    "alti",  # altimeter
+    "mslp",  # mean sea level pressure
+    "vsby",  # visibility
+    "feel",  # apparent temperature
+    "wxcodes",  # weather codes
+    "skyc1",
+    "skyc2",
+    "skyc3",
+    "skyc4",
+    "skyl1",
+    "skyl2",
+    "skyl3",
+    "skyl4",
 ]
 
 IEM_URL = "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py"
@@ -95,8 +113,10 @@ def build_params(station: str, year: int) -> list[tuple[str, str]]:
 def save_timezone_mapping() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     meta = pd.DataFrame(
-        [{"origin_airport": airport, "airport_timezone": tz}
-         for airport, tz in AIRPORT_TIMEZONES.items()]
+        [
+            {"origin_airport": airport, "airport_timezone": tz}
+            for airport, tz in AIRPORT_TIMEZONES.items()
+        ]
     ).sort_values("origin_airport")
     meta.to_csv(META_PATH, index=False)
     print(f"Saved timezone mapping: {META_PATH}")

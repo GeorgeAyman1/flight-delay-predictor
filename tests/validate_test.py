@@ -1,4 +1,2 @@
-import pytest
-
 def test_passing_validate_pipeline():
-  assert 5 == 5
+    assert 5 == 5
