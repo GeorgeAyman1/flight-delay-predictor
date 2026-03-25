@@ -86,7 +86,8 @@ class final_processing():
 
         final_df.to_parquet("data/processed/merged_dataset.parquet")
 
-# To run the code:
+
+# Should be removed
 if __name__ == "__main__":
     processor = final_processing()
     processor.merge_all()

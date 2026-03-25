@@ -17,3 +17,6 @@ jobs:
 
       - name: Run Tests in Container
         run: docker run --rm flight-predictor-test poetry run pytest tests/
+
+      - name: Run Ruff Linting
+        run: docker run --rm flight-predictor-test poetry run ruff check .
