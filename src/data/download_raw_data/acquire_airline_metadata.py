@@ -30,12 +30,16 @@ Required dependencies:
 from pathlib import Path
 import requests
 import pandas as pd
+import os
+from dotenv import load_dotenv
+
 
 # ── paths ─────────────────────────────────────────────────────────────────────
-ROOT        = Path(__file__).resolve().parents[2]
-RAW_DIR     = ROOT / "data" / "raw" / "airlines"
+load_dotenv()
+ROOT = Path(os.getenv("PROJECT_ROOT"))
+RAW_DIR = ROOT / "data" / "raw" / "airlines"
 INTERIM_DIR = ROOT / "data" / "interim"
-OUT_PATH    = INTERIM_DIR / "airlines.parquet"
+OUT_PATH = INTERIM_DIR / "airlines.parquet"
 
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 INTERIM_DIR.mkdir(parents=True, exist_ok=True)
@@ -114,7 +118,7 @@ def fetch_bts_carrier_names() -> dict[str, str]:
 
     # Official names sourced from BTS airline codes registry
     # URL: https://www.bts.gov/topics/airlines-and-airports/airline-codes
-    print(f"  Using official BTS carrier names")
+    print("  Using official BTS carrier names")
     return FALLBACK_NAMES.copy()
 
 
@@ -126,12 +130,14 @@ def build_airlines_table(carrier_names: dict[str, str]) -> pd.DataFrame:
     records = []
     for code in sorted(OUR_CARRIERS):
         meta = CARRIER_METADATA[code]
-        records.append({
-            "carrier_code": code,
-            "carrier_name": carrier_names.get(code, FALLBACK_NAMES[code]),
-            "carrier_type": meta["carrier_type"],
-            "hub_airports": meta["hub_airports"],
-        })
+        records.append(
+            {
+                "carrier_code": code,
+                "carrier_name": carrier_names.get(code, FALLBACK_NAMES[code]),
+                "carrier_type": meta["carrier_type"],
+                "hub_airports": meta["hub_airports"],
+            }
+        )
     return pd.DataFrame(records)
 
 
@@ -149,7 +155,7 @@ def main() -> None:
     names_path = RAW_DIR / "bts_carrier_names.txt"
     names_path.write_text(
         "\n".join(f"{k}: {v}" for k, v in sorted(carrier_names.items())),
-        encoding="utf-8"
+        encoding="utf-8",
     )
     print(f"  Resolved names saved to: {names_path.name}")
 

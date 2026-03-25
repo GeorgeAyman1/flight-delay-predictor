@@ -19,12 +19,16 @@ from pathlib import Path
 import requests
 import pandas as pd
 from timezonefinder import TimezoneFinder
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # ── paths ─────────────────────────────────────────────────────────────────────
-ROOT        = Path(__file__).resolve().parents[2]
-RAW_DIR     = ROOT / "data" / "raw" / "airports"
+ROOT = Path(os.getenv("PROJECT_ROOT"))
+RAW_DIR = ROOT / "data" / "raw" / "airports"
 INTERIM_DIR = ROOT / "data" / "interim"
-OUT_PATH    = INTERIM_DIR / "airports.parquet"
+OUT_PATH = INTERIM_DIR / "airports.parquet"
 
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 INTERIM_DIR.mkdir(parents=True, exist_ok=True)
@@ -41,23 +45,176 @@ OURAIRPORTS_RUNWAYS_URL = (
 # Union of all unique origin + destination airport codes from flights_combined.
 # Update this set if the flight dataset changes.
 OUR_AIRPORTS = {
-    "ABQ", "ACK", "AGS", "ALB", "AMA", "ANC", "ATL", "ATW", "AUS", "AVL",
-    "AVP", "BDL", "BFL", "BGR", "BHM", "BIL", "BIS", "BNA", "BOI", "BOS",
-    "BQN", "BTR", "BTV", "BUF", "BUR", "BWI", "BZN", "CAE", "CHA", "CHS",
-    "CID", "CLE", "CLT", "CMH", "COS", "CVG", "DAB", "DAL", "DAY", "DCA",
-    "DEN", "DFW", "DLH", "DRO", "DSM", "DTW", "ECP", "EGE", "ELP", "EUG",
-    "EWR", "EYW", "FAI", "FAR", "FAT", "FCA", "FLL", "FSD", "GEG", "GFK",
-    "GJT", "GRB", "GRR", "GSO", "GSP", "GTF", "GUC", "HDN", "HNL", "HOU",
-    "HRL", "HSV", "HYA", "IAD", "IAH", "ICT", "ILM", "IND", "ISP", "JAC",
-    "JAX", "JFK", "JNU", "KOA", "KTN", "LAS", "LAX", "LBB", "LEX", "LGA",
-    "LIH", "LIT", "LNK", "MAF", "MCI", "MCO", "MDT", "MDW", "MEM", "MFE",
-    "MFR", "MHT", "MIA", "MKE", "MRY", "MSN", "MSO", "MSP", "MSY", "MTJ",
-    "MVY", "MYR", "OAK", "OGG", "OKC", "OMA", "ONT", "ORD", "ORF", "ORH",
-    "PAE", "PBI", "PDX", "PHL", "PHX", "PIT", "PNS", "PQI", "PSC", "PSE",
-    "PSP", "PVD", "PWM", "RAP", "RDM", "RDU", "RIC", "RNO", "ROC", "RST",
-    "RSW", "SAN", "SAT", "SAV", "SBA", "SBN", "SBP", "SDF", "SEA", "SFO",
-    "SIT", "SJC", "SJU", "SLC", "SMF", "SNA", "SRQ", "STL", "STS", "STT",
-    "STX", "SYR", "TLH", "TPA", "TUL", "TUS", "TVC", "TYS", "VPS", "WRG",
+    "ABQ",
+    "ACK",
+    "AGS",
+    "ALB",
+    "AMA",
+    "ANC",
+    "ATL",
+    "ATW",
+    "AUS",
+    "AVL",
+    "AVP",
+    "BDL",
+    "BFL",
+    "BGR",
+    "BHM",
+    "BIL",
+    "BIS",
+    "BNA",
+    "BOI",
+    "BOS",
+    "BQN",
+    "BTR",
+    "BTV",
+    "BUF",
+    "BUR",
+    "BWI",
+    "BZN",
+    "CAE",
+    "CHA",
+    "CHS",
+    "CID",
+    "CLE",
+    "CLT",
+    "CMH",
+    "COS",
+    "CVG",
+    "DAB",
+    "DAL",
+    "DAY",
+    "DCA",
+    "DEN",
+    "DFW",
+    "DLH",
+    "DRO",
+    "DSM",
+    "DTW",
+    "ECP",
+    "EGE",
+    "ELP",
+    "EUG",
+    "EWR",
+    "EYW",
+    "FAI",
+    "FAR",
+    "FAT",
+    "FCA",
+    "FLL",
+    "FSD",
+    "GEG",
+    "GFK",
+    "GJT",
+    "GRB",
+    "GRR",
+    "GSO",
+    "GSP",
+    "GTF",
+    "GUC",
+    "HDN",
+    "HNL",
+    "HOU",
+    "HRL",
+    "HSV",
+    "HYA",
+    "IAD",
+    "IAH",
+    "ICT",
+    "ILM",
+    "IND",
+    "ISP",
+    "JAC",
+    "JAX",
+    "JFK",
+    "JNU",
+    "KOA",
+    "KTN",
+    "LAS",
+    "LAX",
+    "LBB",
+    "LEX",
+    "LGA",
+    "LIH",
+    "LIT",
+    "LNK",
+    "MAF",
+    "MCI",
+    "MCO",
+    "MDT",
+    "MDW",
+    "MEM",
+    "MFE",
+    "MFR",
+    "MHT",
+    "MIA",
+    "MKE",
+    "MRY",
+    "MSN",
+    "MSO",
+    "MSP",
+    "MSY",
+    "MTJ",
+    "MVY",
+    "MYR",
+    "OAK",
+    "OGG",
+    "OKC",
+    "OMA",
+    "ONT",
+    "ORD",
+    "ORF",
+    "ORH",
+    "PAE",
+    "PBI",
+    "PDX",
+    "PHL",
+    "PHX",
+    "PIT",
+    "PNS",
+    "PQI",
+    "PSC",
+    "PSE",
+    "PSP",
+    "PVD",
+    "PWM",
+    "RAP",
+    "RDM",
+    "RDU",
+    "RIC",
+    "RNO",
+    "ROC",
+    "RST",
+    "RSW",
+    "SAN",
+    "SAT",
+    "SAV",
+    "SBA",
+    "SBN",
+    "SBP",
+    "SDF",
+    "SEA",
+    "SFO",
+    "SIT",
+    "SJC",
+    "SJU",
+    "SLC",
+    "SMF",
+    "SNA",
+    "SRQ",
+    "STL",
+    "STS",
+    "STT",
+    "STX",
+    "SYR",
+    "TLH",
+    "TPA",
+    "TUL",
+    "TUS",
+    "TVC",
+    "TYS",
+    "VPS",
+    "WRG",
     "XNA",
 }
 
@@ -88,21 +245,32 @@ def load_airports(path: Path) -> pd.DataFrame:
     # Extract 2-letter state code from iso_region e.g. "US-CA" -> "CA"
     df["state"] = df["iso_region"].str.split("-").str[-1]
 
-    df = df.rename(columns={
-        "iata_code":     "airport_code",
-        "name":          "airport_name",
-        "municipality":  "city",
-        "latitude_deg":  "latitude",
-        "longitude_deg": "longitude",
-        "elevation_ft":  "elevation_ft",
-        "type":          "airport_type",
-        "ident":         "ident",
-    })
+    df = df.rename(
+        columns={
+            "iata_code": "airport_code",
+            "name": "airport_name",
+            "municipality": "city",
+            "latitude_deg": "latitude",
+            "longitude_deg": "longitude",
+            "elevation_ft": "elevation_ft",
+            "type": "airport_type",
+            "ident": "ident",
+        }
+    )
 
-    return df[[
-        "airport_code", "airport_name", "city", "state",
-        "latitude", "longitude", "elevation_ft", "airport_type", "ident",
-    ]].reset_index(drop=True)
+    return df[
+        [
+            "airport_code",
+            "airport_name",
+            "city",
+            "state",
+            "latitude",
+            "longitude",
+            "elevation_ft",
+            "airport_type",
+            "ident",
+        ]
+    ].reset_index(drop=True)
 
 
 def load_runway_counts(runways_path: Path, airports_df: pd.DataFrame) -> pd.DataFrame:
@@ -140,10 +308,7 @@ def derive_timezones(df: pd.DataFrame) -> pd.Series:
     timezones = []
 
     for _, row in df.iterrows():
-        tz = tf.timezone_at(
-            lat=float(row["latitude"]),
-            lng=float(row["longitude"])
-        )
+        tz = tf.timezone_at(lat=float(row["latitude"]), lng=float(row["longitude"]))
         timezones.append(tz if tz else "Unknown")
 
     return pd.Series(timezones, index=df.index, name="timezone")
@@ -158,16 +323,16 @@ def main() -> None:
     # ── Step 1: Download raw files ────────────────────────────────────────────
     print("\n[1] Downloading raw files ...")
     airports_raw = RAW_DIR / "ourairports_airports.csv"
-    runways_raw  = RAW_DIR / "ourairports_runways.csv"
+    runways_raw = RAW_DIR / "ourairports_runways.csv"
 
     download_file(OURAIRPORTS_AIRPORTS_URL, airports_raw, "OurAirports airports")
-    download_file(OURAIRPORTS_RUNWAYS_URL,  runways_raw,  "OurAirports runways")
+    download_file(OURAIRPORTS_RUNWAYS_URL, runways_raw, "OurAirports runways")
 
     # ── Step 2: Load and filter airports ──────────────────────────────────────
     print("\n[2] Loading airports ...")
     airports_df = load_airports(airports_raw)
 
-    matched   = set(airports_df["airport_code"])
+    matched = set(airports_df["airport_code"])
     not_found = OUR_AIRPORTS - matched
 
     print(f"  Matched:   {len(matched)} / {len(OUR_AIRPORTS)}")
@@ -178,7 +343,7 @@ def main() -> None:
 
     # ── Step 3: Load runway counts ────────────────────────────────────────────
     print("\n[3] Loading runway counts ...")
-    runway_df   = load_runway_counts(runways_raw, airports_df)
+    runway_df = load_runway_counts(runways_raw, airports_df)
     airports_df = airports_df.merge(runway_df, on="airport_code", how="left")
     airports_df["num_runways"] = airports_df["num_runways"].fillna(0).astype(int)
 
@@ -203,9 +368,11 @@ def main() -> None:
     if null_elev:
         median_elev = airports_df["elevation_ft"].median()
         airports_df["elevation_ft"] = airports_df["elevation_ft"].fillna(median_elev)
-        print(f"  elevation_ft: {null_elev} nulls filled with median ({median_elev:.0f} ft)")
+        print(
+            f"  elevation_ft: {null_elev} nulls filled with median ({median_elev:.0f} ft)"
+        )
     else:
-        print(f"  No nulls found in any column")
+        print("  No nulls found in any column")
 
     # ── Step 6: Final column selection ───────────────────────────────────────
     final_cols = [
