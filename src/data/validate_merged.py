@@ -24,7 +24,7 @@ from dotenv import load_dotenv
 load_dotenv()
 ROOT = Path(os.getenv("PROJECT_ROOT"))
 DATA_PATH = ROOT / "data" / "processed" / "merged_dataset.parquet"
-REPORT_PATH = ROOT / "data" / "reports" / "validation_results.json"
+REPORT_PATH = ROOT / "reports" / "validation_results.json"
 REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 
