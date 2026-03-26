@@ -15,6 +15,7 @@ timezonefinder = "^8.2.1"
 beautifulsoup4 = "^4.14.3"
 dotenv = "^0.9.9"
 ruff = "^0.15.7"
+great-expectations = "^1.15.1"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

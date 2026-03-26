@@ -1,0 +1,1262 @@
+{
+  "generated_at": "2026-03-26T08:37:09.248834",
+  "data_path": "C:\\Users\\youse\\Desktop\\University\\Data Science\\flight-delay-predictor\\data\\processed\\merged_dataset.parquet",
+  "shape": {
+    "rows": 4977182,
+    "cols": 60
+  },
+  "summary": {
+    "total": 134,
+    "pass": 112,
+    "warn": 16,
+    "fail": 6,
+    "info": 0,
+    "success_rate": 83.6
+  },
+  "year_counts": {},
+  "target_stats": {
+    "missing": 0,
+    "mean": 14.87,
+    "median": -1.0,
+    "std": 53.13,
+    "min": -93.0,
+    "max": 2640.0,
+    "pct_delayed_ge15": 23.16,
+    "n_delayed_ge15": 1152926,
+    "n_on_time_lt15": 3824256,
+    "n_negative": 2623657,
+    "n_non_negative": 2353525
+  },
+  "weather_completeness": {
+    "tmpf": 100.0,
+    "dwpf": 100.0,
+    "relh": 100.0,
+    "drct": 96.5,
+    "sknt": 99.9,
+    "gust": 15.1,
+    "p01i": 94.8,
+    "alti": 100.0,
+    "mslp": 99.6,
+    "vsby": 100.0,
+    "feel": 100.0,
+    "wxcodes": 11.1,
+    "skyc1": 100.0,
+    "skyc2": 54.2,
+    "skyc3": 24.3,
+    "skyc4": 4.4,
+    "skyl1": 87.3,
+    "skyl2": 54.2,
+    "skyl3": 24.3,
+    "skyl4": 4.4
+  },
+  "completeness_observed": {
+    "carrier_code": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "origin_airport": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "destination_airport": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "date_mmddyyyy": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "scheduled_departure_time": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "scheduled_elapsed_time_minutes": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "airline": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "year_x": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "flight_number": {
+      "missing": 0,
+      "pct_complete": 100.0
+    },
+    "tmpf": {
+      "missing": 433,
+      "pct_complete": 99.99
+    },
+    "dwpf": {
+      "missing": 493,
+      "pct_complete": 99.99
+    },
+    "relh": {
+      "missing": 534,
+      "pct_complete": 99.99
+    },
+    "sknt": {
+      "missing": 5042,
+      "pct_complete": 99.9
+    },
+    "vsby": {
+      "missing": 240,
+      "pct_complete": 100.0
+    },
+    "drct": {
+      "missing": 175587,
+      "pct_complete": 96.47
+    },
+    "gust": {
+      "missing": 4224096,
+      "pct_complete": 15.13
+    },
+    "p01i": {
+      "missing": 259195,
+      "pct_complete": 94.79
+    },
+    "alti": {
+      "missing": 142,
+      "pct_complete": 100.0
+    },
+    "mslp": {
+      "missing": 21328,
+      "pct_complete": 99.57
+    },
+    "feel": {
+      "missing": 1058,
+      "pct_complete": 99.98
+    },
+    "wxcodes": {
+      "missing": 4422737,
+      "pct_complete": 11.14
+    },
+    "skyc1": {
+      "missing": 99,
+      "pct_complete": 100.0
+    },
+    "skyc2": {
+      "missing": 2277156,
+      "pct_complete": 54.25
+    },
+    "skyc3": {
+      "missing": 3767285,
+      "pct_complete": 24.31
+    },
+    "skyc4": {
+      "missing": 4759421,
+      "pct_complete": 4.38
+    }
+  },
+  "sections": [
+    "shape",
+    "completeness",
+    "duplicates",
+    "years",
+    "validity",
+    "target",
+    "weather",
+    "weather_range",
+    "weather_logical",
+    "airports",
+    "airlines"
+  ],
+  "section_meta": {
+    "shape": {
+      "label": "Shape & Schema",
+      "group": "Flights"
+    },
+    "completeness": {
+      "label": "Completeness",
+      "group": "Flights"
+    },
+    "duplicates": {
+      "label": "Duplicates",
+      "group": "Flights"
+    },
+    "years": {
+      "label": "Year Distribution",
+      "group": "Flights"
+    },
+    "validity": {
+      "label": "Field Validity",
+      "group": "Flights"
+    },
+    "target": {
+      "label": "Target Variable",
+      "group": "Flights"
+    },
+    "weather": {
+      "label": "Weather Fields",
+      "group": "Weather"
+    },
+    "weather_range": {
+      "label": "Weather Ranges",
+      "group": "Weather"
+    },
+    "weather_logical": {
+      "label": "Logical Checks",
+      "group": "Weather"
+    },
+    "airports": {
+      "label": "Airport Metadata",
+      "group": "Airports"
+    },
+    "airlines": {
+      "label": "Airline Metadata",
+      "group": "Airlines"
+    }
+  },
+  "results": [
+    {
+      "section": "shape",
+      "expectation": "expect_table_row_count_to_be_between",
+      "status": "pass",
+      "detail": "Row count: 4,977,182",
+      "observed": 4977182
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_table_columns_to_match_set",
+      "status": "pass",
+      "detail": "All 30 required columns present",
+      "observed": {
+        "total_cols": 60,
+        "missing": []
+      }
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 carrier_code",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 origin_airport",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 destination_airport",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 date_mmddyyyy",
+      "status": "pass",
+      "detail": "dtype: datetime64[us]"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 scheduled_departure_time",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 scheduled_elapsed_time_minutes",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 airline",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 year_x",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 flight_number",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 departure_delay_minutes",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 tmpf (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 dwpf (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 relh (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 drct (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 sknt (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 gust (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 p01i (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 alti (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 mslp (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 vsby (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 feel (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 wxcodes (weather)",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 skyc1 (weather)",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 skyc2 (weather)",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 skyc3 (weather)",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 skyc4 (weather)",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 skyl1 (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 skyl2 (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 skyl3 (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "shape",
+      "expectation": "expect_column_to_exist \u2014 skyl4 (weather)",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 carrier_code",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 origin_airport",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 destination_airport",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 date_mmddyyyy",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 scheduled_departure_time",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 scheduled_elapsed_time_minutes",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 airline",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 year_x",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 flight_number",
+      "status": "pass",
+      "detail": "Missing: 0 (0.0%)",
+      "observed": {
+        "missing": 0,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 tmpf (weather)",
+      "status": "warn",
+      "detail": "Missing: 433 (0.0%)",
+      "observed": {
+        "missing": 433,
+        "pct": 0.01
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 dwpf (weather)",
+      "status": "warn",
+      "detail": "Missing: 493 (0.0%)",
+      "observed": {
+        "missing": 493,
+        "pct": 0.01
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 relh (weather)",
+      "status": "warn",
+      "detail": "Missing: 534 (0.0%)",
+      "observed": {
+        "missing": 534,
+        "pct": 0.01
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 sknt (weather)",
+      "status": "warn",
+      "detail": "Missing: 5,042 (0.1%)",
+      "observed": {
+        "missing": 5042,
+        "pct": 0.1
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 vsby (weather)",
+      "status": "warn",
+      "detail": "Missing: 240 (0.0%)",
+      "observed": {
+        "missing": 240,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 drct (weather)",
+      "status": "warn",
+      "detail": "Missing: 175,587 (3.5%)",
+      "observed": {
+        "missing": 175587,
+        "pct": 3.53
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 gust (weather)",
+      "status": "warn",
+      "detail": "Missing: 4,224,096 (84.9%)",
+      "observed": {
+        "missing": 4224096,
+        "pct": 84.87
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 p01i (weather)",
+      "status": "warn",
+      "detail": "Missing: 259,195 (5.2%)",
+      "observed": {
+        "missing": 259195,
+        "pct": 5.21
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 alti (weather)",
+      "status": "warn",
+      "detail": "Missing: 142 (0.0%)",
+      "observed": {
+        "missing": 142,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 mslp (weather)",
+      "status": "warn",
+      "detail": "Missing: 21,328 (0.4%)",
+      "observed": {
+        "missing": 21328,
+        "pct": 0.43
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 feel (weather)",
+      "status": "warn",
+      "detail": "Missing: 1,058 (0.0%)",
+      "observed": {
+        "missing": 1058,
+        "pct": 0.02
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 wxcodes (weather)",
+      "status": "warn",
+      "detail": "Missing: 4,422,737 (88.9%)",
+      "observed": {
+        "missing": 4422737,
+        "pct": 88.86
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 skyc1 (weather)",
+      "status": "warn",
+      "detail": "Missing: 99 (0.0%)",
+      "observed": {
+        "missing": 99,
+        "pct": 0.0
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 skyc2 (weather)",
+      "status": "warn",
+      "detail": "Missing: 2,277,156 (45.8%)",
+      "observed": {
+        "missing": 2277156,
+        "pct": 45.75
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 skyc3 (weather)",
+      "status": "warn",
+      "detail": "Missing: 3,767,285 (75.7%)",
+      "observed": {
+        "missing": 3767285,
+        "pct": 75.69
+      }
+    },
+    {
+      "section": "completeness",
+      "expectation": "expect_column_values_to_not_be_null \u2014 skyc4 (weather)",
+      "status": "warn",
+      "detail": "Missing: 4,759,421 (95.6%)",
+      "observed": {
+        "missing": 4759421,
+        "pct": 95.62
+      }
+    },
+    {
+      "section": "duplicates",
+      "expectation": "expect_table_row_count_to_equal (no exact duplicates)",
+      "status": "pass",
+      "detail": "Exact duplicate rows: 0",
+      "observed": 0
+    },
+    {
+      "section": "duplicates",
+      "expectation": "expect_compound_columns_to_be_unique \u2014 flight identity",
+      "status": "pass",
+      "detail": "Duplicate flight-identity rows: 0  (key: date+carrier+flight#+origin+dest+dep_time)",
+      "observed": 0
+    },
+    {
+      "section": "years",
+      "expectation": "expect_column_values_to_not_be_null \u2014 year",
+      "status": "pass",
+      "detail": "NaN years: 0",
+      "observed": 0
+    },
+    {
+      "section": "years",
+      "expectation": "expect_column_values_to_be_in_set \u2014 year \u2208 {2022,2023,2024,2025}",
+      "status": "pass",
+      "detail": "Years outside range [2022,2025]: 0",
+      "observed": {
+        "year_counts": {
+          "2022": 1167904,
+          "2023": 1286613,
+          "2024": 1314163,
+          "2025": 1208502
+        },
+        "outside_range": 0
+      }
+    },
+    {
+      "section": "years",
+      "expectation": "expect_column_value_lengths_to_be_between \u2014 2022 records",
+      "status": "pass",
+      "detail": "Records in 2022: 1,167,904",
+      "observed": 1167904
+    },
+    {
+      "section": "years",
+      "expectation": "expect_column_value_lengths_to_be_between \u2014 2023 records",
+      "status": "pass",
+      "detail": "Records in 2023: 1,286,613",
+      "observed": 1286613
+    },
+    {
+      "section": "years",
+      "expectation": "expect_column_value_lengths_to_be_between \u2014 2024 records",
+      "status": "pass",
+      "detail": "Records in 2024: 1,314,163",
+      "observed": 1314163
+    },
+    {
+      "section": "years",
+      "expectation": "expect_column_value_lengths_to_be_between \u2014 2025 records",
+      "status": "pass",
+      "detail": "Records in 2025: 1,208,502",
+      "observed": 1208502
+    },
+    {
+      "section": "validity",
+      "expectation": "expect_column_values_to_match_regex \u2014 origin_airport [A-Z]{3}",
+      "status": "pass",
+      "detail": "Invalid codes: 0",
+      "observed": 0
+    },
+    {
+      "section": "validity",
+      "expectation": "expect_column_values_to_be_in_set \u2014 origin_airport",
+      "status": "pass",
+      "detail": "Airports outside expected 15: 0",
+      "observed": 0
+    },
+    {
+      "section": "validity",
+      "expectation": "expect_column_values_to_match_regex \u2014 destination_airport [A-Z]{3}",
+      "status": "pass",
+      "detail": "Invalid codes: 0",
+      "observed": 0
+    },
+    {
+      "section": "validity",
+      "expectation": "expect_column_values_to_match_regex \u2014 carrier_code [A-Z0-9]{2}",
+      "status": "pass",
+      "detail": "Invalid codes: 0",
+      "observed": 0
+    },
+    {
+      "section": "validity",
+      "expectation": "expect_column_values_to_be_in_set \u2014 carrier_code",
+      "status": "pass",
+      "detail": "Carriers outside expected 5: 0",
+      "observed": 0
+    },
+    {
+      "section": "validity",
+      "expectation": "expect_column_values_to_be_between \u2014 scheduled_departure_time [0, 2359]",
+      "status": "pass",
+      "detail": "Invalid times: 0",
+      "observed": 0
+    },
+    {
+      "section": "validity",
+      "expectation": "expect_column_values_to_be_between \u2014 scheduled_elapsed_time_minutes > 0",
+      "status": "pass",
+      "detail": "Non-positive elapsed: 0",
+      "observed": 0
+    },
+    {
+      "section": "target",
+      "expectation": "expect_column_values_to_not_be_null \u2014 departure_delay_minutes",
+      "status": "pass",
+      "detail": "Missing: 0",
+      "observed": 0
+    },
+    {
+      "section": "target",
+      "expectation": "expect_column_values_to_be_of_type \u2014 float64",
+      "status": "pass",
+      "detail": "dtype: float64",
+      "observed": "float64"
+    },
+    {
+      "section": "target",
+      "expectation": "expect_column_mean_to_be_between \u2014 mean delay",
+      "status": "pass",
+      "detail": "Mean: 14.87 min  |  Median: -1.00 min",
+      "observed": 14.87
+    },
+    {
+      "section": "target",
+      "expectation": "expect_column_values_to_be_between \u2014 binary threshold \u226515 min",
+      "status": "pass",
+      "detail": "Delayed \u226515 min: 1,152,926 (23.2%)  |  On-time: 3,824,256",
+      "observed": {
+        "pct_delayed": 23.16
+      }
+    },
+    {
+      "section": "target",
+      "expectation": "expect_column_min_to_be_between \u2014 min delay (negatives valid)",
+      "status": "pass",
+      "detail": "Min: -93.0 min  |  Max: 2640.0 min",
+      "observed": {
+        "min": -93.0,
+        "max": 2640.0
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 tmpf",
+      "status": "pass",
+      "detail": "Complete: 100.0%  (433 missing)",
+      "observed": {
+        "pct_complete": 100.0,
+        "missing": 433
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 dwpf",
+      "status": "pass",
+      "detail": "Complete: 100.0%  (493 missing)",
+      "observed": {
+        "pct_complete": 100.0,
+        "missing": 493
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 relh",
+      "status": "pass",
+      "detail": "Complete: 100.0%  (534 missing)",
+      "observed": {
+        "pct_complete": 100.0,
+        "missing": 534
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 drct",
+      "status": "pass",
+      "detail": "Complete: 96.5%  (175,587 missing)",
+      "observed": {
+        "pct_complete": 96.5,
+        "missing": 175587
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 sknt",
+      "status": "pass",
+      "detail": "Complete: 99.9%  (5,042 missing)",
+      "observed": {
+        "pct_complete": 99.9,
+        "missing": 5042
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 gust",
+      "status": "pass",
+      "detail": "Complete: 15.1%  (4,224,096 missing)",
+      "observed": {
+        "pct_complete": 15.1,
+        "missing": 4224096
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 p01i",
+      "status": "pass",
+      "detail": "Complete: 94.8%  (259,195 missing)",
+      "observed": {
+        "pct_complete": 94.8,
+        "missing": 259195
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 alti",
+      "status": "pass",
+      "detail": "Complete: 100.0%  (142 missing)",
+      "observed": {
+        "pct_complete": 100.0,
+        "missing": 142
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 mslp",
+      "status": "pass",
+      "detail": "Complete: 99.6%  (21,328 missing)",
+      "observed": {
+        "pct_complete": 99.6,
+        "missing": 21328
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 vsby",
+      "status": "pass",
+      "detail": "Complete: 100.0%  (240 missing)",
+      "observed": {
+        "pct_complete": 100.0,
+        "missing": 240
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 feel",
+      "status": "pass",
+      "detail": "Complete: 100.0%  (1,058 missing)",
+      "observed": {
+        "pct_complete": 100.0,
+        "missing": 1058
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 wxcodes",
+      "status": "pass",
+      "detail": "Complete: 11.1%  (4,422,737 missing)",
+      "observed": {
+        "pct_complete": 11.1,
+        "missing": 4422737
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 skyc1",
+      "status": "pass",
+      "detail": "Complete: 100.0%  (99 missing)",
+      "observed": {
+        "pct_complete": 100.0,
+        "missing": 99
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 skyc2",
+      "status": "pass",
+      "detail": "Complete: 54.2%  (2,277,156 missing)",
+      "observed": {
+        "pct_complete": 54.2,
+        "missing": 2277156
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 skyc3",
+      "status": "pass",
+      "detail": "Complete: 24.3%  (3,767,285 missing)",
+      "observed": {
+        "pct_complete": 24.3,
+        "missing": 3767285
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 skyc4",
+      "status": "pass",
+      "detail": "Complete: 4.4%  (4,759,421 missing)",
+      "observed": {
+        "pct_complete": 4.4,
+        "missing": 4759421
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 skyl1",
+      "status": "pass",
+      "detail": "Complete: 87.3%  (633,078 missing)",
+      "observed": {
+        "pct_complete": 87.3,
+        "missing": 633078
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 skyl2",
+      "status": "pass",
+      "detail": "Complete: 54.2%  (2,277,156 missing)",
+      "observed": {
+        "pct_complete": 54.2,
+        "missing": 2277156
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 skyl3",
+      "status": "pass",
+      "detail": "Complete: 24.3%  (3,767,285 missing)",
+      "observed": {
+        "pct_complete": 24.3,
+        "missing": 3767285
+      }
+    },
+    {
+      "section": "weather",
+      "expectation": "expect_column_to_exist \u2014 skyl4",
+      "status": "pass",
+      "detail": "Complete: 4.4%  (4,759,421 missing)",
+      "observed": {
+        "pct_complete": 4.4,
+        "missing": 4759421
+      }
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 tmpf > -80\u00b0F",
+      "status": "pass",
+      "detail": "Out-of-range values: 0  (bounds: [-80, +\u221e])",
+      "observed": 0
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 relh [0, 100]",
+      "status": "pass",
+      "detail": "Out-of-range values: 0  (bounds: [0, 100])",
+      "observed": 0
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 drct [0, 360]",
+      "status": "pass",
+      "detail": "Out-of-range values: 0  (bounds: [0, 360])",
+      "observed": 0
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 sknt \u2265 0",
+      "status": "pass",
+      "detail": "Out-of-range values: 0  (bounds: [0, +\u221e])",
+      "observed": 0
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 gust \u2265 0",
+      "status": "pass",
+      "detail": "Out-of-range values: 0  (bounds: [0, +\u221e])",
+      "observed": 0
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 p01i \u2265 0",
+      "status": "pass",
+      "detail": "Out-of-range values: 0  (bounds: [0, +\u221e])",
+      "observed": 0
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 alti [25, 32] inHg",
+      "status": "fail",
+      "detail": "Out-of-range values: 100  (bounds: [25, 32])",
+      "observed": 100
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 mslp [850, 1100] mb",
+      "status": "pass",
+      "detail": "Out-of-range values: 0  (bounds: [850, 1100])",
+      "observed": 0
+    },
+    {
+      "section": "weather_range",
+      "expectation": "expect_column_values_to_be_between \u2014 vsby [0, 100] miles",
+      "status": "fail",
+      "detail": "Out-of-range values: 25  (bounds: [0, 100])",
+      "observed": 25
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_pair_values_A_to_be_greater_than_or_equal_to_B \u2014 tmpf \u2265 dwpf",
+      "status": "fail",
+      "detail": "Dew point > temperature (impossible): 41",
+      "observed": 41
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_pair_values_A_to_be_greater_than_or_equal_to_B \u2014 gust \u2265 sknt",
+      "status": "fail",
+      "detail": "Gust < wind speed (impossible): 4",
+      "observed": 4
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_pair_values_A_to_be_less_than_or_equal_to_B \u2014 skyl1 \u2264 skyl2",
+      "status": "fail",
+      "detail": "Layer order violation: 52",
+      "observed": 52
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_pair_values_A_to_be_less_than_or_equal_to_B \u2014 skyl2 \u2264 skyl3",
+      "status": "fail",
+      "detail": "Layer order violation: 32",
+      "observed": 32
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_pair_values_A_to_be_less_than_or_equal_to_B \u2014 skyl3 \u2264 skyl4",
+      "status": "pass",
+      "detail": "Layer order violation: 0",
+      "observed": 0
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_values_to_be_in_set \u2014 skyc1",
+      "status": "pass",
+      "detail": "Invalid codes: 0  (valid: CLR,FEW,SCT,BKN,OVC,VV)",
+      "observed": 0
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_values_to_be_in_set \u2014 skyc2",
+      "status": "pass",
+      "detail": "Invalid codes: 0  (valid: CLR,FEW,SCT,BKN,OVC,VV)",
+      "observed": 0
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_values_to_be_in_set \u2014 skyc3",
+      "status": "pass",
+      "detail": "Invalid codes: 0  (valid: CLR,FEW,SCT,BKN,OVC,VV)",
+      "observed": 0
+    },
+    {
+      "section": "weather_logical",
+      "expectation": "expect_column_values_to_be_in_set \u2014 skyc4",
+      "status": "pass",
+      "detail": "Invalid codes: 0  (valid: CLR,FEW,SCT,BKN,OVC,VV)",
+      "observed": 0
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 airport_name",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 city",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 state",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 latitude",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 longitude",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 elevation_ft",
+      "status": "pass",
+      "detail": "dtype: float64"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 airport_type",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 num_runways",
+      "status": "pass",
+      "detail": "dtype: int64"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_to_exist \u2014 timezone",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_values_to_be_between \u2014 latitude [17, 72]",
+      "status": "pass",
+      "detail": "Out-of-range latitudes: 0",
+      "observed": 0
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_values_to_be_between \u2014 longitude [-180, -60]",
+      "status": "pass",
+      "detail": "Out-of-range longitudes: 0",
+      "observed": 0
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_values_to_be_between \u2014 num_runways \u2265 1",
+      "status": "pass",
+      "detail": "Airports with <1 runway: 0",
+      "observed": 0
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_column_values_to_be_in_set \u2014 airport_type",
+      "status": "pass",
+      "detail": "Invalid types: 0",
+      "observed": 0
+    },
+    {
+      "section": "airports",
+      "expectation": "expect_foreign_key_values_to_exist \u2014 airport join coverage",
+      "status": "pass",
+      "detail": "Flight rows with no airport metadata (null lat): 0",
+      "observed": 0
+    },
+    {
+      "section": "airlines",
+      "expectation": "expect_column_to_exist \u2014 carrier_name",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "airlines",
+      "expectation": "expect_column_to_exist \u2014 carrier_type",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "airlines",
+      "expectation": "expect_column_to_exist \u2014 hub_airports",
+      "status": "pass",
+      "detail": "dtype: str"
+    },
+    {
+      "section": "airlines",
+      "expectation": "expect_column_values_to_be_in_set \u2014 carrier_type",
+      "status": "pass",
+      "detail": "Invalid carrier_type values: 0",
+      "observed": 0
+    },
+    {
+      "section": "airlines",
+      "expectation": "expect_foreign_key_values_to_exist \u2014 airline join coverage",
+      "status": "pass",
+      "detail": "Rows with no airline metadata (null carrier_name): 0",
+      "observed": 0
+    }
+  ]
+}

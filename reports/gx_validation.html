@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GX Validation Dashboard — Merged Flight Dataset</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #181b24; --surface2: #1e2230;
+    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+    --text: #e8eaf0; --muted: #8a8fa8;
+    --pass: #22c55e; --fail: #ef4444; --warn: #f59e0b; --info: #3b82f6;
+    --pass-bg: rgba(34,197,94,0.1); --fail-bg: rgba(239,68,68,0.1);
+    --warn-bg: rgba(245,158,11,0.1); --info-bg: rgba(59,130,246,0.1);
+    --accent: #6366f1;
+    --font: 'JetBrains Mono','Fira Code','Courier New',monospace;
+    --sans: -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+  .header { padding: 24px 28px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .header-left h1 { font-size: 18px; font-weight: 600; }
+  .header-left .path { font-family: var(--font); font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .header-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .run-btn { background: var(--accent); color: #fff; border: none; padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+  .run-btn:hover { opacity: 0.85; }
+  .ts { font-size: 11px; color: var(--muted); font-family: var(--font); }
+
+  .summary-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1px; background: var(--border); border-bottom: 1px solid var(--border); }
+  .sc { background: var(--surface); padding: 14px 18px; }
+  .sc .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.6px; }
+  .sc .value { font-size: 24px; font-weight: 700; font-family: var(--font); margin-top: 4px; }
+  .sc .value.pass { color: var(--pass); } .sc .value.fail { color: var(--fail); }
+  .sc .value.warn { color: var(--warn); } .sc .value.neutral { color: var(--text); }
+
+  .body { display: grid; grid-template-columns: 210px 1fr; min-height: calc(100vh - 130px); }
+  .sidebar { border-right: 1px solid var(--border); padding: 12px 0; }
+  .sb-group-title { padding: 5px 14px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin-top: 6px; }
+  .sb-item { padding: 6px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--muted); border-left: 2px solid transparent; transition: all 0.1s; }
+  .sb-item:hover { background: var(--surface2); color: var(--text); }
+  .sb-item.active { background: var(--surface2); color: var(--text); border-left-color: var(--accent); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot.pass { background: var(--pass); } .dot.fail { background: var(--fail); } .dot.warn { background: var(--warn); } .dot.info { background: var(--info); }
+
+  .main { padding: 22px 26px; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .sec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .sec-header h2 { font-size: 15px; font-weight: 600; }
+  .badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .badge.pass { background: var(--pass-bg); color: var(--pass); }
+  .badge.fail { background: var(--fail-bg); color: var(--fail); }
+  .badge.warn { background: var(--warn-bg); color: var(--warn); }
+  .badge.info { background: var(--info-bg); color: var(--info); }
+  .exp-count { font-size: 11px; color: var(--muted); margin-left: auto; }
+
+  .exp-grid { display: grid; gap: 6px; }
+  .exp-row { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; display: flex; gap: 10px; border-left-width: 3px; }
+  .exp-row.pass { border-left-color: var(--pass); }
+  .exp-row.fail { border-left-color: var(--fail); }
+  .exp-row.warn { border-left-color: var(--warn); }
+  .exp-row.info { border-left-color: var(--info); }
+  .exp-icon { font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+  .exp-title { font-family: var(--font); font-size: 11.5px; font-weight: 500; color: var(--text); }
+  .exp-detail { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .exp-observed { font-family: var(--font); font-size: 10.5px; color: var(--info); margin-top: 3px; }
+
+  .chart-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-top: 12px; }
+  .chart-wrap h3 { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; font-weight: 500; }
+  .chart-canvas-wrap { position: relative; width: 100%; }
+
+  .progress-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .progress-label { font-size: 11px; color: var(--muted); width: 80px; flex-shrink: 0; font-family: var(--font); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .progress-bar { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; }
+  .progress-pct { font-size: 10px; color: var(--muted); font-family: var(--font); width: 38px; text-align: right; }
+
+  .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 10px; }
+  .stat-card { background: var(--surface2); border-radius: 6px; padding: 10px 12px; }
+  .stat-card .sl { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .stat-card .sv { font-size: 17px; font-weight: 700; font-family: var(--font); color: var(--text); margin-top: 2px; }
+  .stat-card .sv.ok { color: var(--pass); } .stat-card .sv.bad { color: var(--fail); } .stat-card .sv.w { color: var(--warn); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .note { font-size: 12px; color: var(--muted); padding: 9px 12px; background: var(--info-bg); border: 1px solid rgba(59,130,246,0.2); border-radius: 6px; margin-top: 10px; }
+
+  .loading-overlay { position: fixed; inset: 0; background: rgba(15,17,23,0.9); display: flex; align-items: center; justify-content: center; z-index: 100; flex-direction: column; gap: 14px; }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 12px; color: var(--muted); font-family: var(--font); }
+
+  .error-banner { background: var(--fail-bg); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 16px 20px; margin: 20px; }
+  .error-banner h3 { color: var(--fail); font-size: 14px; margin-bottom: 8px; }
+  .error-banner p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+  .error-banner code { font-family: var(--font); background: var(--surface2); padding: 2px 6px; border-radius: 3px; font-size: 12px; color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loader">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loader-text">Loading validation_results.json …</div>
+</div>
+
+<div class="header">
+  <div class="header-left">
+    <h1>GX Validation Suite — Merged Flight Dataset</h1>
+    <div class="path" id="data-path">data/processed/merged_dataset.parquet</div>
+  </div>
+  <div class="header-right">
+    <span class="ts" id="ts"></span>
+    <button class="run-btn" onclick="location.reload()">&#8635; Reload Results</button>
+  </div>
+</div>
+
+<div class="summary-bar">
+  <div class="sc"><div class="label">Total Expectations</div><div class="value neutral" id="s-total">—</div></div>
+  <div class="sc"><div class="label">Passed</div><div class="value pass" id="s-pass">—</div></div>
+  <div class="sc"><div class="label">Failed</div><div class="value fail" id="s-fail">—</div></div>
+  <div class="sc"><div class="label">Warnings</div><div class="value warn" id="s-warn">—</div></div>
+  <div class="sc"><div class="label">Rows</div><div class="value neutral" id="s-rows">—</div></div>
+  <div class="sc"><div class="label">Success Rate</div><div class="value neutral" id="s-rate">—</div></div>
+</div>
+
+<div class="body">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="main" id="main"></div>
+</div>
+
+<script>
+const JSON_PATH = '../reports/validation_results.json';
+
+const GROUP_ORDER = ['Flights','Weather','Airports','Airlines'];
+const SECTION_CONFIG = {
+  shape:           { label: 'Shape & Schema',    group: 'Flights' },
+  completeness:    { label: 'Completeness',       group: 'Flights' },
+  duplicates:      { label: 'Duplicates',         group: 'Flights' },
+  years:           { label: 'Year Distribution',  group: 'Flights' },
+  validity:        { label: 'Field Validity',      group: 'Flights' },
+  target:          { label: 'Target Variable',     group: 'Flights' },
+  weather:         { label: 'Weather Fields',      group: 'Weather' },
+  weather_range:   { label: 'Weather Ranges',      group: 'Weather' },
+  weather_logical: { label: 'Logical Checks',      group: 'Weather' },
+  airports:        { label: 'Airport Metadata',    group: 'Airports' },
+  airlines:        { label: 'Airline Metadata',    group: 'Airlines' },
+};
+
+let gData = null;
+let activeSection = 'shape';
+let charts = {};
+
+function statusIcon(s) {
+  const icons = { pass: '<span style="color:var(--pass)">✓</span>', fail: '<span style="color:var(--fail)">✗</span>', warn: '<span style="color:var(--warn)">!</span>', info: '<span style="color:var(--info)">i</span>' };
+  return icons[s] || icons.info;
+}
+
+function sectionStatus(sectionId, results) {
+  const rows = results.filter(r => r.section === sectionId);
+  if (rows.some(r => r.status === 'fail')) return 'fail';
+  if (rows.some(r => r.status === 'warn')) return 'warn';
+  return 'pass';
+}
+
+function buildSidebar(results) {
+  const sidebar = document.getElementById('sidebar');
+  let html = '';
+  const groups = GROUP_ORDER;
+  groups.forEach(group => {
+    const secs = Object.entries(SECTION_CONFIG).filter(([,v]) => v.group === group);
+    if (!secs.length) return;
+    html += `<div class="sb-group-title">${group}</div>`;
+    secs.forEach(([id, cfg]) => {
+      const st = sectionStatus(id, results);
+      html += `<div class="sb-item ${id === activeSection ? 'active' : ''}" data-id="${id}" onclick="showSection('${id}')">
+        <span class="dot ${st}"></span>${cfg.label}
+      </div>`;
+    });
+  });
+  sidebar.innerHTML = html;
+}
+
+function buildMain(results) {
+  const main = document.getElementById('main');
+  let html = '';
+  Object.entries(SECTION_CONFIG).forEach(([id, cfg]) => {
+    const rows = results.filter(r => r.section === id);
+    const st = sectionStatus(id, results);
+    const statusLabel = st === 'fail' ? 'FAILED' : st === 'warn' ? 'WARNING' : 'PASSED';
+    html += `<div class="section ${id === activeSection ? 'active' : ''}" id="sec-${id}">
+      <div class="sec-header">
+        <h2>${cfg.label}</h2>
+        <span class="badge ${st}">${statusLabel}</span>
+        <span class="exp-count">${rows.length} expectations</span>
+      </div>
+      <div class="exp-grid">
+        ${rows.map(r => `
+          <div class="exp-row ${r.status}">
+            <div class="exp-icon">${statusIcon(r.status)}</div>
+            <div style="flex:1;min-width:0">
+              <div class="exp-title">${r.expectation}</div>
+              <div class="exp-detail">${r.detail}</div>
+              ${r.observed !== undefined && r.observed !== null ? `<div class="exp-observed">observed: ${typeof r.observed === 'object' ? JSON.stringify(r.observed) : r.observed}</div>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>
+      <div id="chart-${id}"></div>
+    </div>`;
+  });
+  main.innerHTML = html;
+}
+
+function showSection(id) {
+  activeSection = id;
+  document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
+  const sec = document.getElementById(`sec-${id}`);
+  if (sec) sec.classList.add('active');
+  const si = document.querySelector(`.sb-item[data-id="${id}"]`);
+  if (si) si.classList.add('active');
+  setTimeout(() => renderChart(id), 30);
+}
+
+function renderChart(id) {
+  if (!gData) return;
+  const wrap = document.getElementById(`chart-${id}`);
+  if (!wrap || wrap.dataset.rendered) return;
+  wrap.dataset.rendered = '1';
+
+  if (id === 'completeness') {
+    const obs = gData.completeness_observed || {};
+    const fields = Object.entries(obs).sort((a,b) => b[1].pct_complete - a[1].pct_complete);
+    if (!fields.length) return;
+    wrap.innerHTML = `<div class="chart-wrap"><h3>Field completeness (%)</h3>${fields.map(([col, v]) => {
+      const pct = v.pct_complete;
+      const color = pct === 100 ? 'var(--pass)' : pct > 80 ? 'var(--warn)' : 'var(--fail)';
+      return `<div class="progress-row"><span class="progress-label">${col}</span><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div><span class="progress-pct">${pct.toFixed(1)}%</span></div>`;
+    }).join('')}</div>`;
+
+  } else if (id === 'years') {
+    const yc = gData.year_counts || {};
+    const labels = Object.keys(yc);
+    const values = Object.values(yc);
+    if (!labels.length) return;
+    wrap.innerHTML = `<div class="chart-wrap"><h3>Records by year</h3><div class="chart-canvas-wrap" style="height:180px"><canvas id="c-years"></canvas></div></div>`;
+    setTimeout(() => {
+      if (charts.years) charts.years.destroy();
+      charts.years = new Chart(document.getElementById('c-years'), {
+        type: 'bar',
+        data: { labels, datasets: [{ data: values, backgroundColor: labels.map((y,i) => i === labels.length-1 ? '#f59e0b' : '#6366f1'), borderRadius: 4 }] },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#8a8fa8'}},y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#8a8fa8',callback:v=>v.toLocaleString()}}} }
+      });
+    }, 80);
+
+  } else if (id === 'target') {
+    const ts = gData.target_stats || {};
+    if (!Object.keys(ts).length) return;
+    const pct_delayed = ts.pct_delayed_ge15 || 0;
+    const pct_on_time = Math.round((100 - pct_delayed) * 10) / 10;
+    wrap.innerHTML = `<div class="chart-wrap"><h3>Target variable — departure_delay_minutes</h3>
+      <div class="two-col">
+        <div>
+          <div class="stat-grid">
+            <div class="stat-card"><div class="sl">Missing</div><div class="sv ${ts.missing===0?'ok':'bad'}">${(ts.missing||0).toLocaleString()}</div></div>
+            <div class="stat-card"><div class="sl">Mean delay</div><div class="sv">${ts.mean?.toFixed(1) ?? '—'} min</div></div>
+            <div class="stat-card"><div class="sl">Median</div><div class="sv">${ts.median?.toFixed(1) ?? '—'} min</div></div>
+            <div class="stat-card"><div class="sl">Delayed ≥15m</div><div class="sv w">${pct_delayed.toFixed(1)}%</div></div>
+            <div class="stat-card"><div class="sl">On-time &lt;15m</div><div class="sv ok">${pct_on_time.toFixed(1)}%</div></div>
+            <div class="stat-card"><div class="sl">Min / Max</div><div class="sv" style="font-size:13px">${ts.min} / ${ts.max}</div></div>
+          </div>
+        </div>
+        <div class="chart-canvas-wrap" style="height:160px"><canvas id="c-target"></canvas></div>
+      </div></div>`;
+    setTimeout(() => {
+      if (charts.target) charts.target.destroy();
+      charts.target = new Chart(document.getElementById('c-target'), {
+        type: 'doughnut',
+        data: { labels: ['On-time (<15m)', 'Delayed (≥15m)'], datasets: [{ data: [pct_on_time, pct_delayed], backgroundColor: ['#22c55e','#ef4444'], borderWidth: 0 }] },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:true,position:'bottom',labels:{color:'#8a8fa8',font:{size:11},boxWidth:10}}} }
+      });
+    }, 80);
+
+  } else if (id === 'weather') {
+    const wc = gData.weather_completeness || {};
+    const fields = Object.entries(wc).sort((a,b) => b[1] - a[1]);
+    if (!fields.length) return;
+    wrap.innerHTML = `<div class="chart-wrap"><h3>Weather field completeness (%)</h3>${fields.map(([col, pct]) => {
+      const color = pct > 80 ? 'var(--pass)' : pct > 40 ? 'var(--warn)' : 'var(--muted)';
+      return `<div class="progress-row"><span class="progress-label">${col}</span><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${color}"></div></div><span class="progress-pct">${pct.toFixed(1)}%</span></div>`;
+    }).join('')}</div>`;
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loader').style.display = 'none';
+  document.getElementById('main').innerHTML = `
+    <div class="error-banner">
+      <h3>Could not load validation_results.json</h3>
+      <p>${msg}</p>
+      <p style="margin-top:10px">Run the Python script first:<br>
+      <code>python validate_merged.py</code><br><br>
+      Then open this dashboard from a local server (e.g. <code>python -m http.server</code> in the project root) or place <code>validation_results.json</code> at <code>reports/validation_results.json</code> relative to this HTML file.</p>
+    </div>`;
+}
+
+async function loadAndRender() {
+  try {
+    document.getElementById('loader-text').textContent = 'Fetching validation_results.json …';
+    const resp = await fetch(JSON_PATH);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} — file not found at ${JSON_PATH}`);
+    const data = await resp.json();
+    gData = data;
+
+    document.getElementById('data-path').textContent = data.data_path || 'data/processed/merged_dataset.parquet';
+    document.getElementById('ts').textContent = 'Generated: ' + (data.generated_at ? new Date(data.generated_at).toLocaleString() : '—');
+    document.getElementById('s-total').textContent = data.summary.total;
+    document.getElementById('s-pass').textContent = data.summary.pass;
+    document.getElementById('s-fail').textContent = data.summary.fail;
+    document.getElementById('s-warn').textContent = data.summary.warn;
+    document.getElementById('s-rows').textContent = (data.shape?.rows || 0).toLocaleString();
+    const rateEl = document.getElementById('s-rate');
+    rateEl.textContent = data.summary.success_rate + '%';
+    rateEl.className = 'value ' + (data.summary.success_rate === 100 ? 'pass' : data.summary.success_rate > 90 ? 'warn' : 'fail');
+
+    buildSidebar(data.results);
+    buildMain(data.results);
+    document.getElementById('loader').style.display = 'none';
+    setTimeout(() => renderChart(activeSection), 80);
+
+  } catch (err) {
+    showError(err.message);
+  }
+}
+
+loadAndRender();
+</script>
+</body>
+</html>
