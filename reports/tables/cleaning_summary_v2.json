@@ -1,0 +1,110 @@
+{
+  "input_path": "C:\\Users\\VICTUS\\Desktop\\Engineering\\Sem 8\\Data Science\\flight-delay-predictor\\data\\interim\\merged_dataset.parquet",
+  "output_path": "C:\\Users\\VICTUS\\Desktop\\Engineering\\Sem 8\\Data Science\\flight-delay-predictor\\data\\processed\\cleaned_merged_dataset_v2.parquet",
+  "shape_before": {
+    "rows": 4977182,
+    "cols": 60
+  },
+  "shape_after": {
+    "rows": 4977182,
+    "cols": 61
+  },
+  "rows_removed": 0,
+  "steps_logged": 18,
+  "class_distribution": {
+    "on_time": 3824256,
+    "delayed": 1152926
+  },
+  "sparse_weather_missing_counts": {
+    "gust": 4224100,
+    "wxcodes": 4422737,
+    "skyc2": 2277156,
+    "skyc3": 3767285,
+    "skyc4": 4759421,
+    "skyl2": 2277156,
+    "skyl3": 3767285,
+    "skyl4": 4759421
+  },
+  "top_missing_before": {
+    "skyl4": 4759421,
+    "skyc4": 4759421,
+    "wxcodes": 4422737,
+    "gust": 4224096,
+    "skyc3": 3767285,
+    "skyl3": 3767285,
+    "skyl2": 2277156,
+    "skyc2": 2277156,
+    "skyl1": 633078,
+    "p01i": 259195,
+    "drct": 175587,
+    "mslp": 21328,
+    "tail_number": 19062,
+    "sknt": 5042,
+    "feel": 1058,
+    "relh": 534,
+    "dwpf": 493,
+    "tmpf": 433,
+    "vsby": 240,
+    "alti": 142
+  },
+  "top_missing_after": {
+    "skyc4": 4759421,
+    "skyl4": 4759421,
+    "wxcodes": 4422737,
+    "gust": 4224100,
+    "skyl3": 3767285,
+    "skyc3": 3767285,
+    "skyc2": 2277156,
+    "skyl2": 2277156,
+    "skyl1": 633078,
+    "p01i": 259195,
+    "drct": 175587,
+    "mslp": 21328,
+    "tail_number": 19062,
+    "sknt": 5042,
+    "feel": 1058,
+    "dwpf": 534,
+    "relh": 534,
+    "tmpf": 433,
+    "vsby": 240,
+    "alti": 142
+  },
+  "split_summary": {
+    "train_years": [
+      2022,
+      2023
+    ],
+    "validation_years": [
+      2024
+    ],
+    "test_years": [
+      2025
+    ],
+    "train_shape": {
+      "rows": 2454517,
+      "cols": 61
+    },
+    "validation_shape": {
+      "rows": 1314163,
+      "cols": 61
+    },
+    "test_shape": {
+      "rows": 1208502,
+      "cols": 61
+    },
+    "class_distribution": {
+      "train": {
+        "0": 1896894,
+        "1": 557623
+      },
+      "validation": {
+        "0": 1000199,
+        "1": 313964
+      },
+      "test": {
+        "0": 927163,
+        "1": 281339
+      }
+    }
+  }
+}
