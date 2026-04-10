@@ -1,0 +1,19 @@
+step_number,action,columns,details,reason,rows_affected
+1,Standardization,all object/string columns,Trimmed leading/trailing whitespace from text columns.,"Whitespace can break joins, filters, grouping, and categorical consistency.",26931
+2,Standardization,"carrier_code, origin_airport, destination_airport",Uppercased carrier and airport codes.,Codes should be case-consistent before validation and modeling.,0
+3,Type coercion,"date_dt, scheduled_departure_dt, valid",Converted confirmed date/datetime columns to pandas datetime.,Only true timestamps were parsed. HHMM operational time fields and timezone were left untouched.,0
+4,Preservation,"scheduled_departure_time, actual_departure_time, wheelsoff_time, timezone",Kept operational HHMM-style time fields and timezone as strings instead of parsing them as datetimes.,"These are identifiers/clock fields, not full timestamps.",0
+5,Type coercion,"departure_delay_minutes, tmpf, dwpf, sknt, gust, relh, vsby, p01i, alti, flight_number, scheduled_elapsed_time_minutes, actual_elapsed_time_minutes, taxiout_time_minutes, delay_carrier_minutes, delay_weather_minutes, delay_national_aviation_system_minutes, delay_security_minutes, delay_late_aircraft_arrival_minutes, year_x, lon, lat, elevation, year_y, latitude, longitude, elevation_ft, num_runways",Converted likely numeric columns to numeric dtype using coercion.,"Numeric consistency is required for anomaly checks, summaries, and modeling.",0
+6,Removal,all columns,No exact duplicate rows found.,Exact duplicates add no information and can bias analysis.,0
+7,Audit,"date_dt, carrier_code, flight_number, origin_airport, destination_airport, scheduled_departure_dt",Checked business-key duplicates only; no rows dropped because DROP_FLIGHT_KEY_DUPLICATES=False.,"Business-key duplicate removal should be explicit, not accidental.",0
+8,Removal,carrier_code,Removed the known BTS source/junk row and carrier codes outside the 5 project carriers.,Keeps the dataset aligned with the documented project scope.,0
+9,Cell nullification,dwpf,Set `dwpf` to missing where `dwpf > tmpf`.,Dew point above air temperature indicates a bad sensor reading.,41
+10,Cell nullification,gust,Set `gust` to missing where `gust < sknt`.,Wind gust lower than sustained wind indicates a bad sensor reading.,4
+11,Cell nullification,relh,"Set `relh` to missing where values were outside [0, 100].",Clearly impossible physical values should not be retained as valid measurements.,0
+12,Cell nullification,sknt,Set `sknt` to missing where values were negative.,Clearly impossible physical values should not be retained as valid measurements.,0
+13,Cell nullification,gust,Set `gust` to missing where values were negative.,Clearly impossible physical values should not be retained as valid measurements.,0
+14,Cell nullification,vsby,Set `vsby` to missing where values were negative.,Clearly impossible physical values should not be retained as valid measurements.,0
+15,Cell nullification,p01i,Set `p01i` to missing where values were negative.,Clearly impossible physical values should not be retained as valid measurements.,0
+16,Feature creation,departure_delayed,Created the binary target from `departure_delay_minutes` using threshold >= 15 minutes.,This is the project target used for classification.,4977182
+17,Documentation,"gust, wxcodes, skyc2, skyc3, skyc4, skyl2, skyl3, skyl4",Preserved natural sparsity in sparse weather fields; no blanket imputation was performed here.,"These columns are sparse by nature, so missingness is meaningful.",30254561
+18,Dataset split,year-based temporal split,"Split cleaned dataset into train (2022-2023), validation (2024), and test (2025).",Prevents temporal leakage and reflects real-world forecasting conditions.,4977182

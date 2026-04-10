@@ -1,0 +1,38 @@
+{
+  "train_years": [
+    2022,
+    2023
+  ],
+  "validation_years": [
+    2024
+  ],
+  "test_years": [
+    2025
+  ],
+  "train_shape": {
+    "rows": 2454517,
+    "cols": 61
+  },
+  "validation_shape": {
+    "rows": 1314163,
+    "cols": 61
+  },
+  "test_shape": {
+    "rows": 1208502,
+    "cols": 61
+  },
+  "class_distribution": {
+    "train": {
+      "0": 1896894,
+      "1": 557623
+    },
+    "validation": {
+      "0": 1000199,
+      "1": 313964
+    },
+    "test": {
+      "0": 927163,
+      "1": 281339
+    }
+  }
+}
