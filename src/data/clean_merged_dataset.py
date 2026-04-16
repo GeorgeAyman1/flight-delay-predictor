@@ -11,7 +11,7 @@ import pandas as pd
 # Configuration
 # =============================================================================
 INPUT_PATH = Path(
-    r"C:\Users\VICTUS\Desktop\Engineering\Sem 8\Data Science\flight-delay-predictor\data\interim\merged_dataset.parquet"
+    r"C:\Users\hp\Desktop\Term 7\Data Science\Project\flight-delay-predictor\data\processed\merged_dataset.parquet"
 )
 
 REPO_ROOT = INPUT_PATH.parents[2]

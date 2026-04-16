@@ -1,6 +1,6 @@
 {
-  "input_path": "C:\\Users\\VICTUS\\Desktop\\Engineering\\Sem 8\\Data Science\\flight-delay-predictor\\data\\interim\\merged_dataset.parquet",
-  "output_path": "C:\\Users\\VICTUS\\Desktop\\Engineering\\Sem 8\\Data Science\\flight-delay-predictor\\data\\processed\\cleaned_merged_dataset_v2.parquet",
+  "input_path": "C:\\Users\\hp\\Desktop\\Term 7\\Data Science\\Project\\flight-delay-predictor\\data\\processed\\merged_dataset.parquet",
+  "output_path": "C:\\Users\\hp\\Desktop\\Term 7\\Data Science\\Project\\flight-delay-predictor\\data\\processed\\cleaned_merged_dataset_v2.parquet",
   "shape_before": {
     "rows": 4977182,
     "cols": 60
