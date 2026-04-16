@@ -1,7 +1,7 @@
 # Cleaning Summary
 
-**Input file:** `C:\Users\VICTUS\Desktop\Engineering\Sem 8\Data Science\flight-delay-predictor\data\interim\merged_dataset.parquet`
-**Output file:** `C:\Users\VICTUS\Desktop\Engineering\Sem 8\Data Science\flight-delay-predictor\data\processed\cleaned_merged_dataset_v2.parquet`
+**Input file:** `C:\Users\hp\Desktop\Term 7\Data Science\Project\flight-delay-predictor\data\processed\merged_dataset.parquet`
+**Output file:** `C:\Users\hp\Desktop\Term 7\Data Science\Project\flight-delay-predictor\data\processed\cleaned_merged_dataset_v2.parquet`
 
 ## Shape
 
