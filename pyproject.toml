@@ -20,6 +20,10 @@ joblib = "^1.5.3"
 scikit-learn = "^1.8.0"
 numpy = "^2.4.4"
 holidays = "^0.94"
+ipykernel = "^7.2.0"
+fastparquet = "^2026.3.0"
+matplotlib = "^3.10.8"
+seaborn = "^0.13.2"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
