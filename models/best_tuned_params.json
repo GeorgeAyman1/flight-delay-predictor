@@ -1,0 +1,17 @@
+{
+  "model": "xgboost",
+  "scoring": "f1",
+  "n_iter": 30,
+  "best_params": {
+    "subsample": "0.9",
+    "reg_lambda": "2.0",
+    "reg_alpha": "0.1",
+    "n_estimators": "300",
+    "min_child_weight": "5",
+    "max_depth": "6",
+    "learning_rate": "0.05",
+    "gamma": "0.5",
+    "colsample_bytree": "0.6"
+  },
+  "best_score": 0.4412
+}
