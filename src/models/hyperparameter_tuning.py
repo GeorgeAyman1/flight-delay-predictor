@@ -235,7 +235,7 @@ class HyperparameterTuner:
         print(f"{'='*60}")
         print(f"  Scoring metric : {self.scoring}")
         print(f"  Iterations     : {self.n_iter}")
-        print(f"  Validation     : PredefinedSplit (2024 holdout)")
+        print("  Validation     : PredefinedSplit (2024 holdout)")
 
         search = RandomizedSearchCV(
             estimator=base_models[self.model_to_tune],
@@ -376,9 +376,9 @@ class HyperparameterTuner:
                 indent=2,
             )
 
-        print(f"\n  Saved tuned model  → models/best_tuned_model.pkl")
-        print(f"  Saved best params  → models/best_tuned_params.json")
-        print(f"\n  Tuning complete ✓")
+        print("\n  Saved tuned model  → models/best_tuned_model.pkl")
+        print("  Saved best params  → models/best_tuned_params.json")
+        print("\n  Tuning complete ✓")
 
         return {
             "best_params": best_params,

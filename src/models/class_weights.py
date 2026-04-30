@@ -96,7 +96,7 @@ class ClassWeightCalculator:
             json.dump(class_weights, f, indent=2)
 
         print(f"  Saved: {self.weights_out}")
-        print(f"\n  WARNING: never combine with SMOTE or other resampling.")
+        print("\n  WARNING: never combine with SMOTE or other resampling.")
 
         print(f"\n{'═'*60}")
         print("Class weights complete.")

@@ -106,7 +106,7 @@ class ModelComparator:
                     model_path = self.models_dir / f"{filename}.pkl"
                     if not model_path.exists():
                         print(f"  ✗ Model file not found: {model_path}")
-                        print(f"    Run model_training.py first.")
+                        print("    Run model_training.py first.")
                         continue
 
                     with open(model_path, "rb") as f:
@@ -149,10 +149,10 @@ class ModelComparator:
 
                     tn, fp, fn, tp = cm.ravel()
 
-                print(f"\n  Classification Report:")
+                print("\n  Classification Report:")
                 print(classification_report(y_valid, y_pred, digits=3))
                 print(f"  ROC-AUC         : {roc:.4f}")
-                print(f"\n  Confusion Matrix:")
+                print("\n  Confusion Matrix:")
                 print(f"    True  Negatives (correct on-time)  : {tn:>8,}")
                 print(f"    False Positives (false alarm)       : {fp:>8,}")
                 print(f"    False Negatives (missed delay) ← ✗ : {fn:>8,}")

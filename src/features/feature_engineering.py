@@ -112,7 +112,7 @@ class FeatureEngineer:
 
         global_mean = float(train_df['departure_delayed'].mean())
 
-        print(f"\nRoute support filter:")
+        print("\nRoute support filter:")
         print(f"  Total routes:    {len(route_counts)}")
         print(f"  Reliable routes: {len(reliable_routes)}")
         print(f"  Filtered out:    {len(route_counts) - len(reliable_routes)}")
@@ -124,11 +124,11 @@ class FeatureEngineer:
             df['route_delay_rate'] = df['route'].map(route_rates).fillna(global_mean)
             df.drop(columns=['route'], inplace=True)
 
-        print(f"\nAirline delay rates (train only):")
+        print("\nAirline delay rates (train only):")
         print(airline_rates.round(3).to_string())
-        print(f"\nAirport delay rates (train only):")
+        print("\nAirport delay rates (train only):")
         print(airport_rates.round(3).to_string())
-        print(f"\nNaN check after mapping:")
+        print("\nNaN check after mapping:")
         print(train_df[['airline_delay_rate', 'airport_delay_rate', 'route_delay_rate']].isna().sum().to_string())
 
         return train_df
@@ -182,7 +182,7 @@ class FeatureEngineer:
         if split_name == 'train':
             delayed_avg = df[df['departure_delayed'] == 1]['weather_severity'].mean()
             ontime_avg = df[df['departure_delayed'] == 0]['weather_severity'].mean()
-            print(f"\nWeather severity signal check (train only):")
+            print("\nWeather severity signal check (train only):")
             print(f"  Delayed avg:    {delayed_avg:.3f}")
             print(f"  On-time avg:    {ontime_avg:.3f}")
             print(f"  Signal correct: {delayed_avg > ontime_avg} ← delayed should be higher")
@@ -218,7 +218,7 @@ class FeatureEngineer:
         p33 = train_df['route_congestion_raw'].quantile(0.33)
         p66 = train_df['route_congestion_raw'].quantile(0.66)
 
-        print(f"\nRoute congestion thresholds (train only):")
+        print("\nRoute congestion thresholds (train only):")
         print(f"  33rd percentile: {p33:.1f} flights/runway → low/medium boundary")
         print(f"  66th percentile: {p66:.1f} flights/runway → medium/high boundary")
 
@@ -240,11 +240,11 @@ class FeatureEngineer:
         for df in dfs:
             assign_congestion(df)
 
-        print(f"\nRoute congestion value counts (train):")
+        print("\nRoute congestion value counts (train):")
         print(train_df['route_congestion'].value_counts().sort_index().to_string())
         print(f"  Unique values: {sorted(train_df['route_congestion'].unique())}")
         print(f"  NaN check:     {train_df['route_congestion'].isna().sum()}")
-        print(f"\nDelay rate by congestion level (train only):")
+        print("\nDelay rate by congestion level (train only):")
         print(train_df.groupby('route_congestion')['departure_delayed'].mean().round(3).to_string())
 
         return train_df
@@ -282,7 +282,7 @@ class FeatureEngineer:
         for df in [train, valid, test]:
             df.drop(columns=self.COLS_TO_DROP, inplace=True, errors='ignore')
 
-        print(f"\nAfter dropping leakage/redundant columns:")
+        print("\nAfter dropping leakage/redundant columns:")
         print(f"  Train columns: {train.shape[1]}")
 
         # ── STEP 2 — FIX DATETIME COLUMNS ───────────────────────
@@ -291,14 +291,14 @@ class FeatureEngineer:
             df['date_dt'] = pd.to_datetime(df['date_dt'], format='mixed')
             df['scheduled_departure_dt'] = pd.to_datetime(df['scheduled_departure_dt'], format='mixed')
 
-        print(f"\nDatetime columns converted successfully")
+        print("\nDatetime columns converted successfully")
 
         # ── STEP 3 — TIME FEATURES ──────────────────────────────
         train = self._add_time_features(train)
         valid = self._add_time_features(valid)
         test = self._add_time_features(test)
 
-        print(f"\nAfter time features:")
+        print("\nAfter time features:")
         print(f"  Train shape: {train.shape}")
         print(f"  New columns: {[c for c in train.columns if c.startswith('tod') or c == 'day_of_week']}")
 
@@ -319,7 +319,7 @@ class FeatureEngineer:
         valid = self._add_holiday_features(valid, us_holidays_obj, all_holiday_dates, window_dates)
         test = self._add_holiday_features(test, us_holidays_obj, all_holiday_dates, window_dates)
 
-        print(f"\nAfter holiday features:")
+        print("\nAfter holiday features:")
         print(f"  Train shape: {train.shape}")
         print(f"  is_holiday count:        {train['is_holiday'].sum()}")
         print(f"  is_holiday_window count: {train['is_holiday_window'].sum()}")
@@ -327,7 +327,7 @@ class FeatureEngineer:
         # ── STEP 5 — HISTORICAL AGGREGATION FEATURES ────────────
         train = self._add_historical_features(train, valid, test)
 
-        print(f"\nAfter historical features:")
+        print("\nAfter historical features:")
         print(f"  Train shape: {train.shape}")
 
         # ── STEP 6 — LAG FEATURE ────────────────────────────────
@@ -335,9 +335,9 @@ class FeatureEngineer:
         valid = self._add_lag_feature(valid)
         test = self._add_lag_feature(test)
 
-        print(f"\nAfter lag feature:")
+        print("\nAfter lag feature:")
         print(f"  Train shape: {train.shape}")
-        print(f"  prev_flight_delayed value counts:")
+        print("  prev_flight_delayed value counts:")
         print(train['prev_flight_delayed'].value_counts().to_string())
         print(f"  NaN check: {train['prev_flight_delayed'].isna().sum()}")
 
@@ -346,18 +346,18 @@ class FeatureEngineer:
         valid = self._add_weather_severity(valid, split_name='valid')
         test = self._add_weather_severity(test, split_name='test')
 
-        print(f"\nAfter weather severity:")
+        print("\nAfter weather severity:")
         print(f"  Train shape: {train.shape}")
 
         # ── STEP 8 — ROUTE CONGESTION ───────────────────────────
         train = self._add_route_congestion(train, valid, test)
 
-        print(f"\nAfter route congestion:")
+        print("\nAfter route congestion:")
         print(f"  Train shape: {train.shape}")
 
         # ── STEP 9 — FINAL VALIDATION BEFORE SAVING ─────────────
         print(f"\n{'═'*60}")
-        print(f"FINAL VALIDATION")
+        print("FINAL VALIDATION")
         print(f"{'═'*60}")
 
         expected_new_cols = [
@@ -369,7 +369,7 @@ class FeatureEngineer:
             'route_congestion',
         ]
 
-        print(f"\nExpected new feature columns:")
+        print("\nExpected new feature columns:")
         for col in expected_new_cols:
             in_train = col in train.columns
             in_valid = col in valid.columns
@@ -377,20 +377,20 @@ class FeatureEngineer:
             status = '✓' if (in_train and in_valid and in_test) else '✗ MISSING'
             print(f"  {status}  {col}")
 
-        print(f"\nFinal shapes:")
+        print("\nFinal shapes:")
         print(f"  Train: {train.shape}")
         print(f"  Valid: {valid.shape}")
         print(f"  Test:  {test.shape}")
 
-        print(f"\nNaN summary (train):")
+        print("\nNaN summary (train):")
         nan_cols = train.isnull().sum()
         nan_cols = nan_cols[nan_cols > 0]
         if len(nan_cols) == 0:
-            print(f"  No NaNs found ✓")
+            print("  No NaNs found ✓")
         else:
             print(nan_cols.to_string())
 
-        print(f"\ndeparture_delayed still present:")
+        print("\ndeparture_delayed still present:")
         print(f"  Train: {'departure_delayed' in train.columns} ✓")
         print(f"  Valid: {'departure_delayed' in valid.columns} ✓")
         print(f"  Test:  {'departure_delayed' in test.columns} ✓")
@@ -401,7 +401,7 @@ class FeatureEngineer:
         test.to_parquet(self.data_dir / "test_features.parquet", index=False)
 
         print(f"\n{'═'*60}")
-        print(f"Saved successfully:")
+        print("Saved successfully:")
         print(f"  data/processed/train_features.parquet  ({train.shape[0]:,} rows, {train.shape[1]} cols)")
         print(f"  data/processed/valid_features.parquet  ({valid.shape[0]:,} rows, {valid.shape[1]} cols)")
         print(f"  data/processed/test_features.parquet   ({test.shape[0]:,} rows, {test.shape[1]} cols)")

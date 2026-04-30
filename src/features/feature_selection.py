@@ -104,7 +104,7 @@ class FeatureSelector:
         X_valid = valid.drop(columns=[self.TARGET])
         X_test = test.drop(columns=[self.TARGET])
 
-        print(f"\nAfter separating target:")
+        print("\nAfter separating target:")
         print(f"  X_train: {X_train.shape}")
         print(f"  X_valid: {X_valid.shape}")
         print(f"  X_test:  {X_test.shape}")
@@ -345,44 +345,44 @@ class FeatureSelector:
         print(f"  After importance filter:  {len(selected_cols)} features  (dropped {len(low_importance_cols)})")
         print(f"\n  Total dropped: {len(all_dropped)}")
 
-        print(f"\n  Dropped — non-numeric (information already in engineered features):")
+        print("\n  Dropped — non-numeric (information already in engineered features):")
         print(f"    {non_numeric_cols}")
 
-        print(f"\n  Dropped — variance (near-constant, <1% minority value):")
+        print("\n  Dropped — variance (near-constant, <1% minority value):")
         print(f"    {low_variance_cols if low_variance_cols else 'none'}")
 
-        print(f"\n  Protected from variance (lookup-table features — few unique values by construction):")
+        print("\n  Protected from variance (lookup-table features — few unique values by construction):")
         print(f"    {protected_present}")
 
-        print(f"\n  Dropped — correlation (redundant pair, lower target correlation dropped):")
+        print("\n  Dropped — correlation (redundant pair, lower target correlation dropped):")
         print(f"    {to_drop_corr if to_drop_corr else 'none'}")
 
-        print(f"\n  Dropped — mutual information (essentially zero target information):")
+        print("\n  Dropped — mutual information (essentially zero target information):")
         print(f"    {low_mi_cols if low_mi_cols else 'none'}")
 
         print(f"\n  Dropped — importance (Random Forest score < {self.IMPORTANCE_THRESHOLD}):")
         print(f"    {[c for c in low_importance_cols if c not in self.FORCE_DROP]}")
 
-        print(f"\n  Dropped — domain reasoning (better proxy already exists):")
+        print("\n  Dropped — domain reasoning (better proxy already exists):")
         print(f"    {[c for c in low_importance_cols if c in self.FORCE_DROP]}")
 
-        print(f"\n  Reinstated — domain reasoning (consistent signal, RF undervalued):")
+        print("\n  Reinstated — domain reasoning (consistent signal, RF undervalued):")
         print(f"    {force_kept if force_kept else 'none'}")
 
-        print(f"\n  Final selected features (ranked by importance):")
+        print("\n  Final selected features (ranked by importance):")
         for i, col in enumerate(selected_cols, 1):
             score = importance_series.get(col, 0.0)
             print(f"    {i:2d}. {col:<35} importance: {score:.4f}")
 
-        print(f"\n  NaN check on saved train file:")
+        print("\n  NaN check on saved train file:")
         nan_counts = train_out.isnull().sum()
         nan_counts = nan_counts[nan_counts > 0]
         if len(nan_counts) == 0:
-            print(f"    No NaNs found ✓")
+            print("    No NaNs found ✓")
         else:
             print(nan_counts.to_string())
 
-        print(f"\n  Target present in all splits:")
+        print("\n  Target present in all splits:")
         print(f"    Train: {self.TARGET in train_out.columns} ✓")
         print(f"    Valid: {self.TARGET in valid_out.columns} ✓")
         print(f"    Test:  {self.TARGET in test_out.columns}  ✓")
