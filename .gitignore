@@ -52,3 +52,5 @@ mlruns/
 
 #Poetry File
 poetry.toml
+
+*.pkl
