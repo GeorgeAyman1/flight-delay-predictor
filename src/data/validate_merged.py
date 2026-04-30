@@ -15,7 +15,6 @@ from pathlib import Path
 from datetime import datetime
 import json
 import pandas as pd
-import numpy as np
 import os
 from dotenv import load_dotenv
 
@@ -229,7 +228,6 @@ VALID_ORIGINS = {"BOS","CLT","DEN","DFW","DTW","EWR","IAH","JFK","LAX","MIA","MS
 VALID_CARRIERS = {"AA","AS","B6","DL","UA"}
 
 def count_regex_mismatch(series, pattern):
-    import re
     mask = series.dropna().astype(str).str.fullmatch(pattern)
     return int((~mask).sum())
 
@@ -327,8 +325,10 @@ def range_check(col, lo=None, hi=None):
         return -1
     s = num(df[col])
     mask = pd.Series(False, index=s.index)
-    if lo is not None: mask = mask | (s < lo)
-    if hi is not None: mask = mask | (s > hi)
+    if lo is not None: 
+        mask = mask | (s < lo)
+    if hi is not None: 
+        mask = mask | (s > hi)
     return int((mask & s.notna()).sum())
 
 checks_range = [
@@ -359,19 +359,22 @@ S = "weather_logical"
 VALID_SKY_CODES = {"CLR","FEW","SCT","BKN","OVC","VV"}
 
 if "tmpf" in df.columns and "dwpf" in df.columns:
-    tmpf = num(df["tmpf"]); dwpf = num(df["dwpf"])
+    tmpf = num(df["tmpf"])
+    dwpf = num(df["dwpf"])
     dew_gt_temp = int(((dwpf - tmpf) > 0).sum())
     add(S, "Logical Checks", "Weather", expect(S, "expect_column_pair_values_A_to_be_greater_than_or_equal_to_B — tmpf ≥ dwpf", dew_gt_temp==0, f"Dew point > temperature (impossible): {dew_gt_temp:,}", observed=dew_gt_temp))
 
 if "sknt" in df.columns and "gust" in df.columns:
-    sknt = num(df["sknt"]); gust = num(df["gust"])
+    sknt = num(df["sknt"])
+    gust = num(df["gust"])
     gust_lt_wind = int((gust < sknt).sum())
     add(S, "Logical Checks", "Weather", expect(S, "expect_column_pair_values_A_to_be_greater_than_or_equal_to_B — gust ≥ sknt", gust_lt_wind==0, f"Gust < wind speed (impossible): {gust_lt_wind:,}", observed=gust_lt_wind))
 
 sky_levels = [("skyl1","skyl2"), ("skyl2","skyl3"), ("skyl3","skyl4")]
 for lo_col, hi_col in sky_levels:
     if lo_col in df.columns and hi_col in df.columns:
-        lo_s = num(df[lo_col]); hi_s = num(df[hi_col])
+        lo_s = num(df[lo_col])
+        hi_s = num(df[hi_col])
         bad = int((lo_s > hi_s).sum())
         add(S, "Logical Checks", "Weather", expect(S, f"expect_column_pair_values_A_to_be_less_than_or_equal_to_B — {lo_col} ≤ {hi_col}", bad==0, f"Layer order violation: {bad:,}", observed=bad))
 
@@ -470,7 +473,7 @@ output = {
 }
 
 REPORT_PATH.write_text(json.dumps(output, indent=2), encoding="utf-8")
-print(f"\nValidation complete.")
+print("\nValidation complete.")
 print(f"  Total expectations : {output['summary']['total']}")
 print(f"  Passed             : {output['summary']['pass']}")
 print(f"  Failed             : {output['summary']['fail']}")
