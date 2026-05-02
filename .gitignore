@@ -53,4 +53,8 @@ mlruns/
 #Poetry File
 poetry.toml
 
+*.pem
+catboost_info/
 *.pkl
+*.tar.gz
+*.txt

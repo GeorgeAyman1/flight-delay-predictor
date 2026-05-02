@@ -1,15 +1,24 @@
 """
-model_comparison.py
-───────────────────
+model_comparison.py  — Enhanced
+─────────────────────────────────
 Loads all saved models and evaluates them on the validation set.
-Produces a ranked comparison table.
+
+Key changes vs v1:
+  • Evaluates at BOTH default threshold (0.5) AND optimal F1 threshold
+    (saved by model_training.py) — shows the true ceiling of each model
+  • Added PR-AUC (Precision-Recall AUC) metric — more informative than
+    ROC-AUC for imbalanced classes (EDA confirmed 3.4:1 ratio)
+  • Covers new models: extra_trees, hist_gradient_boosting, catboost
+  • Final table sorted by F1 at optimal threshold
+  • Cleaner selection rationale printed at the end
 
 Run AFTER model_training.py
 """
 
 import pandas as pd
 import pickle
-import matplotlib.pyplot as plt
+import numpy as np
+import json
 from pathlib import Path
 
 import mlflow
@@ -18,6 +27,7 @@ from mlflow.tracking import MlflowClient
 from sklearn.metrics import (
     classification_report,
     roc_auc_score,
+    average_precision_score,   # PR-AUC
     confusion_matrix,
     recall_score,
     f1_score,
@@ -25,176 +35,167 @@ from sklearn.metrics import (
     ConfusionMatrixDisplay,
 )
 
+# ─────────────────────────────────────────────────────────────
+# PATHS
+# ─────────────────────────────────────────────────────────────
+BASE_DIR   = Path(__file__).resolve().parents[2]
+DATA_DIR   = BASE_DIR / "data" / "processed"
+MODELS_DIR = BASE_DIR / "models"
+TARGET     = "departure_delayed"
 
-class ModelComparator:
-    """
-    Loads all trained baseline models, evaluates them on the validation set,
-    and produces a ranked comparison table sorted by F1 score.
-    """
+# ─────────────────────────────────────────────────────────────
+# LOAD VALIDATION DATA
+# ─────────────────────────────────────────────────────────────
+print("Loading validation data...")
+valid = pd.read_parquet(DATA_DIR / "valid_selected.parquet")
 
-    TARGET = "departure_delayed"
+X_valid = valid.drop(columns=[TARGET])
+y_valid = valid[TARGET]
+print(f"  Valid : {X_valid.shape}")
 
-    # (display_name, filename, use_scaling)
-    MODEL_REGISTRY = [
-        ("Logistic Regression (baseline)", "logistic_regression", True),
-        ("Random Forest", "random_forest", False),
-        ("XGBoost", "xgboost", False),
-        ("LightGBM", "lightgbm", False),
-        ("Gradient Boosting", "gradient_boosting", False),
-    ]
+# ─────────────────────────────────────────────────────────────
+# LOAD SCALER & THRESHOLDS
+# ─────────────────────────────────────────────────────────────
+with open(MODELS_DIR / "scaler.pkl", "rb") as f:
+    scaler = pickle.load(f)
+X_valid_scaled = scaler.transform(X_valid)
 
-    def __init__(self, base_dir: Path):
-        self.base_dir = base_dir
-        self.data_dir = base_dir / "data" / "processed"
-        self.models_dir = base_dir / "models"
+thresholds_path = MODELS_DIR / "thresholds.json"
+if thresholds_path.exists():
+    with open(thresholds_path) as f:
+        threshold_map = json.load(f)
+else:
+    threshold_map = {}
+    print("  [warn] thresholds.json not found — using 0.5 for all models")
 
-    def run(self) -> dict:
-        """
-        Evaluate all saved models on the validation set and rank them.
+# ─────────────────────────────────────────────────────────────
+# MODEL REGISTRY
+# (display_name, filename, use_scaling)
+# ─────────────────────────────────────────────────────────────
+model_registry = [
+    ("Logistic Regression (baseline)", "logistic_regression",      True),
+    ("Random Forest",                  "random_forest",             False),
+    ("Extra Trees",                    "extra_trees",               False),
+    ("XGBoost",                        "xgboost",                   False),
+    ("LightGBM",                       "lightgbm",                  False),
+    ("Hist Gradient Boosting",         "hist_gradient_boosting",    False),
+    ("Gradient Boosting",              "gradient_boosting",         False),
+    ("CatBoost",                       "catboost",                  False),
+]
 
-        Returns
-        -------
-        dict with keys:
-            - results_df : pd.DataFrame — ranked comparison table
-            - winner      : str         — filename of the top model (e.g. "xgboost")
-        """
+# ─────────────────────────────────────────────────────────────
+# EVALUATE LOOP
+# ─────────────────────────────────────────────────────────────
+results = []
 
-        # ── LOAD VALIDATION DATA ─────────────────────────────────
-        print("Loading validation data...")
-        valid = pd.read_parquet(self.data_dir / "valid_selected.parquet")
+for display_name, filename, use_scaling in model_registry:
 
-        X_valid = valid.drop(columns=[self.TARGET])
-        y_valid = valid[self.TARGET]
+    model_path = MODELS_DIR / f"{filename}.pkl"
+    if not model_path.exists():
+        print(f"\n  [skip] {display_name} — model file not found")
+        continue
 
-        print(f"  Valid : {X_valid.shape}")
+    print(f"\n{'='*60}")
+    print(f"  {display_name}")
+    print(f"{'='*60}")
 
-        # ── LOAD SCALER  (for Logistic Regression only) ──────────
-        with open(self.models_dir / "scaler.pkl", "rb") as f:
-            scaler = pickle.load(f)
+    with open(model_path, "rb") as f:
+        model = pickle.load(f)
 
-        X_valid_scaled = scaler.transform(X_valid)
+    Xva     = X_valid_scaled if use_scaling else X_valid.values
+    y_proba = model.predict_proba(Xva)[:, 1]
 
-        # ── EVALUATE LOOP ────────────────────────────────────────
-        results = []
+    # ── default threshold (0.5) ──────────────────────────────
+    y_pred_def = (y_proba >= 0.5).astype(int)
 
-        mlflow.set_tracking_uri(uri=(self.base_dir / "mlruns").as_uri())
-        client = MlflowClient()
-        exp_name = "flight-delay-baselines"
-        exp = client.get_experiment_by_name(exp_name)
+    # ── optimal F1 threshold ─────────────────────────────────
+    thresh     = threshold_map.get(filename, 0.5)
+    y_pred_opt = (y_proba >= thresh).astype(int)
 
-        if exp is None:
-            experiment_id = client.create_experiment(name=exp_name)
-        else:
-            experiment_id = exp.experiment_id
+    # ── metrics ──────────────────────────────────────────────
+    roc_auc  = roc_auc_score(y_valid, y_proba)
+    pr_auc   = average_precision_score(y_valid, y_proba)   # NEW
 
-        with mlflow.start_run(
-            experiment_id=experiment_id, run_name="baseline-comparison"
-        ) as parent_run:
+    # at default threshold
+    f1_def   = f1_score(y_valid, y_pred_def)
+    rec_def  = recall_score(y_valid, y_pred_def)
+    pre_def  = precision_score(y_valid, y_pred_def)
+    cm_def   = confusion_matrix(y_valid, y_pred_def)
+    tn_d, fp_d, fn_d, tp_d = cm_def.ravel()
 
-            for display_name, filename, use_scaling in self.MODEL_REGISTRY:
+    # at optimal threshold
+    f1_opt   = f1_score(y_valid, y_pred_opt)
+    rec_opt  = recall_score(y_valid, y_pred_opt)
+    pre_opt  = precision_score(y_valid, y_pred_opt)
+    cm_opt   = confusion_matrix(y_valid, y_pred_opt)
+    tn_o, fp_o, fn_o, tp_o = cm_opt.ravel()
 
-                print(f"\n{'='*60}")
-                print(f"  {display_name}")
-                print(f"{'='*60}")
+    print(f"\n  ── At default threshold (0.50) ──")
+    print(classification_report(y_valid, y_pred_def, digits=3))
 
-                with mlflow.start_run(
-                    experiment_id=experiment_id,
-                    run_name=filename,
-                    parent_run_id=parent_run.info.run_id,
-                    nested=True,
-                ):
-                    model_path = self.models_dir / f"{filename}.pkl"
-                    if not model_path.exists():
-                        print(f"  ✗ Model file not found: {model_path}")
-                        print("    Run model_training.py first.")
-                        continue
+    print(f"  ── At optimal threshold ({thresh:.3f}) ──")
+    print(classification_report(y_valid, y_pred_opt, digits=3))
 
-                    with open(model_path, "rb") as f:
-                        model = pickle.load(f)
+    print(f"  ROC-AUC  : {roc_auc:.4f}")
+    print(f"  PR-AUC   : {pr_auc:.4f}   ← NEW: better metric for imbalanced classes")
 
-                    # Log parameters from loaded model
-                    model_params = model.get_params()
-                    mlflow.log_params(
-                        {str(k): str(v) for k, v in model_params.items()}
-                    )
+    print(f"\n  Confusion Matrix @ optimal threshold:")
+    print(f"    True  Negatives (correct on-time)  : {tn_o:>8,}")
+    print(f"    False Positives (false alarm)       : {fp_o:>8,}")
+    print(f"    False Negatives (missed delay) ← ✗ : {fn_o:>8,}")
+    print(f"    True  Positives (caught delay) ← ✓ : {tp_o:>8,}")
 
-                    Xva = X_valid_scaled if use_scaling else X_valid.values
+    results.append({
+        "Model"              : display_name,
+        "ROC-AUC"            : round(roc_auc, 4),
+        "PR-AUC"             : round(pr_auc,  4),
+        "Threshold"          : round(thresh,  3),
+        # optimal threshold metrics
+        "Recall (opt)"       : round(rec_opt, 4),
+        "Precision (opt)"    : round(pre_opt, 4),
+        "F1 (opt)"           : round(f1_opt,  4),
+        # default threshold metrics
+        "F1 (0.5)"           : round(f1_def,  4),
+        "Missed Delays"      : fn_o,
+        "Caught Delays"      : tp_o,
+    })
 
-                    y_pred = model.predict(Xva)
-                    y_proba = model.predict_proba(Xva)[:, 1]
+# ─────────────────────────────────────────────────────────────
+# FINAL COMPARISON TABLE
+# ─────────────────────────────────────────────────────────────
+print(f"\n{'='*60}")
+print("  FINAL COMPARISON  (sorted by F1 at optimal threshold)")
+print(f"{'='*60}")
 
-                    roc = roc_auc_score(y_valid, y_proba)
-                    rec1 = recall_score(y_valid, y_pred)
-                    pre1 = precision_score(y_valid, y_pred)
-                    f1_1 = f1_score(y_valid, y_pred)
-                    cm = confusion_matrix(y_valid, y_pred)
+results_df = (
+    pd.DataFrame(results)
+    .sort_values("F1 (opt)", ascending=False)
+    .reset_index(drop=True)
+)
+results_df.index += 1
 
-                    mlflow.log_metric("val_roc_auc", roc)
-                    mlflow.log_metric("val_recall", rec1)
-                    mlflow.log_metric("val_precision", pre1)
-                    mlflow.log_metric("val_f1", f1_1)
+print(results_df.to_string())
 
-                    # Confusion Matrix Artifact
-                    fig, ax = plt.subplots(figsize=(5, 4))
-                    ConfusionMatrixDisplay(cm).plot(ax=ax, cmap="Blues")
-                    ax.set_title(f"{display_name} — Validation")
-                    plt.tight_layout()
+print(f"""
+─────────────────────────────────────────────────────────────
+HOW TO READ THIS TABLE
+─────────────────────────────────────────────────────────────
+  ROC-AUC      → Overall separation ability (threshold-free)
+  PR-AUC       → Better metric for imbalanced classes:
+                 measures area under Precision-Recall curve
+  Threshold    → Optimal cut-off found during training
+  Recall (opt) → % of real delays caught at optimal threshold
+  F1 (opt)     → Best achievable F1 for each model
+  F1 (0.5)     → F1 at naive 0.5 threshold (for reference)
+  Missed Delays→ Raw count we failed to predict (lower=better)
+  Caught Delays→ Raw count we correctly predicted (higher=better)
+─────────────────────────────────────────────────────────────
+""")
 
-                    cm_path_img = self.models_dir / f"cm_{filename}.png"
-                    fig.savefig(cm_path_img)
-                    mlflow.log_artifact(
-                        cm_path_img.as_posix(), artifact_path="confusion_matrices"
-                    )
-                    plt.close(fig)
+winner = results_df.iloc[0]["Model"]
+winner_file = [f for d, f, _ in model_registry if d == winner]
+winner_file = winner_file[0] if winner_file else "unknown"
 
-                    tn, fp, fn, tp = cm.ravel()
-
-                print("\n  Classification Report:")
-                print(classification_report(y_valid, y_pred, digits=3))
-                print(f"  ROC-AUC         : {roc:.4f}")
-                print("\n  Confusion Matrix:")
-                print(f"    True  Negatives (correct on-time)  : {tn:>8,}")
-                print(f"    False Positives (false alarm)       : {fp:>8,}")
-                print(f"    False Negatives (missed delay) ← ✗ : {fn:>8,}")
-                print(f"    True  Positives (caught delay) ← ✓ : {tp:>8,}")
-
-                results.append(
-                    {
-                        "Model": display_name,
-                        "Filename": filename,
-                        "ROC-AUC": round(roc, 4),
-                        "Recall (Del)": round(rec1, 4),
-                        "Precision (Del)": round(pre1, 4),
-                        "F1 (Del)": round(f1_1, 4),
-                        "Missed Delays": fn,
-                        "Caught Delays": tp,
-                    }
-                )
-
-        # ── FINAL COMPARISON TABLE ───────────────────────────────
-        print(f"\n{'='*60}")
-        print("  FINAL COMPARISON  (sorted by F1 — delayed class)")
-        print(f"{'='*60}")
-
-        results_df = (
-            pd.DataFrame(results)
-            .sort_values("F1 (Del)", ascending=False)
-            .reset_index(drop=True)
-        )
-        results_df.index += 1  # rank from 1
-
-        display_df = results_df.drop(columns=["Filename"])
-        print(display_df.to_string())
-
-        winner_filename = results_df.iloc[0]["Filename"]
-        winner_display = results_df.iloc[0]["Model"]
-        print(f"  ✓ SELECTED FOR TUNING: {winner_display}")
-        print()
-
-        return {"results_df": results_df, "winner": winner_filename}
-
-
-if __name__ == "__main__":
-    base = Path(__file__).resolve().parents[2]
-    comparator = ModelComparator(base)
-    comparator.run()
+print(f"  ✓ SELECTED FOR TUNING: {winner}")
+print(f"    → Pass MODEL_TO_TUNE = \"{winner_file}\" into hyperparameter_tuning.py")
+print()
