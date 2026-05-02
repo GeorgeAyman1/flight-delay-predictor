@@ -1,0 +1,17 @@
+step_number,action,columns,details,reason,rows_affected
+1,Standardization,all object/string columns,Trimmed leading/trailing whitespace from text columns.,"Whitespace can break joins, filters, grouping, and categorical consistency.",26931
+2,Standardization,"carrier_code, origin_airport, destination_airport",Uppercased code-like identifiers.,Carrier and airport codes should be case-consistent before validation or modeling.,0
+3,Type coercion,"scheduled_departure_dt, valid",Converted confirmed date/datetime columns to pandas datetime.,Only true date/datetime fields should be parsed as timestamps. HHMM-style time columns are left numeric.,0
+4,Type coercion,"departure_delay_minutes, tmpf, dwpf, sknt, gust, relh, vsby, p01i, alti, scheduled_elapsed_time_minutes, actual_elapsed_time_minutes, taxiout_time_minutes, delay_carrier_minutes, delay_weather_minutes, delay_national_aviation_system_minutes, delay_security_minutes, delay_late_aircraft_arrival_minutes, elevation, latitude, longitude, elevation_ft, num_runways",Converted likely numeric columns to numeric dtype using coercion.,"Numeric consistency is required for statistics, anomaly checks, and modeling.",0
+5,Removal,all columns,No exact duplicate rows found.,Exact duplicates add no information and can bias analysis.,0
+6,Audit,"carrier_code, flight_number, origin_airport, destination_airport, scheduled_departure_dt",Checked business-key duplicates only; no rows dropped because DROP_FLIGHT_KEY_DUPLICATES=False.,"Business-key duplicate removal should be explicit, not accidental.",0
+7,Removal,carrier_code,Removed known BTS source/junk row and any carrier codes outside the 5 project carriers.,Keeps the dataset aligned with the documented project scope.,0
+8,Cell nullification,dwpf,Set `dwpf` to missing where `dwpf > tmpf`.,Dew point above air temperature indicates a bad weather reading.,41
+9,Cell nullification,gust,Set `gust` to missing where `gust < sknt`.,Wind gust lower than sustained wind indicates a bad weather reading.,4
+10,Cell nullification,relh,"Set `relh` to missing where values were outside [0, 100].",Clearly impossible physical values should not be kept as valid measurements.,0
+11,Cell nullification,sknt,Set `sknt` to missing where values were negative.,Clearly impossible physical values should not be kept as valid measurements.,0
+12,Cell nullification,gust,Set `gust` to missing where values were negative.,Clearly impossible physical values should not be kept as valid measurements.,0
+13,Cell nullification,vsby,Set `vsby` to missing where values were negative.,Clearly impossible physical values should not be kept as valid measurements.,0
+14,Cell nullification,p01i,Set `p01i` to missing where values were negative.,Clearly impossible physical values should not be kept as valid measurements.,0
+15,Feature creation,departure_delayed,Created/standardized binary target from `departure_delay_minutes` using threshold >= 15 minutes.,This is the project target used for classification.,4977182
+16,Documentation,"gust, wxcodes, skyc2, skyc3, skyc4, skyl2, skyl3, skyl4",Preserved natural sparsity in sparse weather columns; no blanket imputation performed here.,"These fields are sparse by nature, so missingness is meaningful.",30254561

@@ -1,13 +1,19 @@
-FROM python:3.12-slim
+FROM python:3.11-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-RUN pip install poetry
+COPY backend/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY pyproject.toml poetry.lock ./
+COPY backend/     ./backend/
+COPY src/         ./src/
+COPY models/      ./models/
+COPY data/        ./data/
+COPY frontend/    ./frontend/
+COPY start.py     ./start.py
 
-RUN poetry install
+ENV PYTHONPATH=/app
 
-COPY . .
-
-CMD ["poetry", "run", "pytest", "tests/"]
+CMD ["python", "start.py"]

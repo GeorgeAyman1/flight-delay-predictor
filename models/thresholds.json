@@ -1,0 +1,10 @@
+{
+  "logistic_regression": 0.48538823090510186,
+  "random_forest": 0.461222249616661,
+  "extra_trees": 0.47193112397054404,
+  "xgboost": 0.4599876403808594,
+  "lightgbm": 0.4658992061897764,
+  "hist_gradient_boosting": 0.4595871985239894,
+  "gradient_boosting": 0.4648243254709119,
+  "catboost": 0.4648591005899649
+}
