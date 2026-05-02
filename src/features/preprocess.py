@@ -10,19 +10,6 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 
 
-# --- Paths ---
-REPO_ROOT  = Path(__file__).parents[2]
-
-TRAIN_PATH = REPO_ROOT / "data" / "processed" / "train_2022_2023_v2.parquet"
-VALID_PATH = REPO_ROOT / "data" / "processed" / "valid_2024_v2.parquet"
-TEST_PATH  = REPO_ROOT / "data" / "processed" / "test_2025_v2.parquet"
-
-TRAIN_OUT  = REPO_ROOT / "data" / "processed" / "train_preprocessed.parquet"
-VALID_OUT  = REPO_ROOT / "data" / "processed" / "valid_preprocessed.parquet"
-TEST_OUT   = REPO_ROOT / "data" / "processed" / "test_preprocessed.parquet"
-
-PREPROCESSOR_PATH = REPO_ROOT / "models" / "preprocessor.joblib"
-
 #-----------------------------------------------------------------------------------------------------
 
 ##the column groups for imputation
@@ -188,59 +175,104 @@ def build_preprocessor() -> ColumnTransformer:
 
 
 #-----------------------------------------------------------------------------------------------------
-def main() -> None:
-
-    # 1. Load data
-    print("Loading data...")
-    train_df = pd.read_parquet(TRAIN_PATH)
-    valid_df = pd.read_parquet(VALID_PATH)
-    test_df  = pd.read_parquet(TEST_PATH)
-
-    # 2. Separate features and target
-    X_train = train_df.drop(columns=[TARGET_COL])
-    y_train = train_df[TARGET_COL]
-
-    X_valid = valid_df.drop(columns=[TARGET_COL])
-    y_valid = valid_df[TARGET_COL]
-
-    X_test  = test_df.drop(columns=[TARGET_COL])
-    y_test  = test_df[TARGET_COL]
-
-    # 3. Build and fit preprocessor on train only
-    print("Fitting preprocessor on train set...")
-    preprocessor = build_preprocessor()
-    preprocessor.fit(X_train)
-
-    # 4. Transform all three sets
-    print("Transforming all sets...")
-    X_train_t = preprocessor.transform(X_train)
-    X_valid_t = preprocessor.transform(X_valid)
-    X_test_t  = preprocessor.transform(X_test)
 
 
-    # 5. Add target back
-    X_train_t[TARGET_COL] = y_train.values
-    X_valid_t[TARGET_COL] = y_valid.values
-    X_test_t[TARGET_COL]  = y_test.values
+class Preprocessor:
+    """
+    Fits a sklearn ColumnTransformer on training data (imputation, custom
+    encoders, column drops) and transforms all three splits.
 
-    # 6. Save preprocessed datasets
-    print("Saving preprocessed datasets...")
-    TRAIN_OUT.parent.mkdir(parents=True, exist_ok=True)
-    X_train_t.to_parquet(TRAIN_OUT,  index=False)
-    X_valid_t.to_parquet(VALID_OUT, index=False)
-    X_test_t.to_parquet(TEST_OUT,   index=False)
+    Saves preprocessed parquet files and the fitted preprocessor artifact.
+    """
 
-    # 7. Save fitted preprocessor
-    print("Saving preprocessor...")
-    PREPROCESSOR_PATH.parent.mkdir(parents=True, exist_ok=True)
-    joblib.dump(preprocessor, PREPROCESSOR_PATH)
+    TARGET_COL = "departure_delayed"
 
-    print("Done.")
-    print(f"Train : {X_train_t.shape}")
-    print(f"Valid : {X_valid_t.shape}")
-    print(f"Test  : {X_test_t.shape}")
-    print(f"Preprocessor saved to: {PREPROCESSOR_PATH}")
+    def __init__(self, base_dir: Path):
+        self.base_dir = base_dir
+        self.data_dir = base_dir / "data" / "processed"
+        self.models_dir = base_dir / "models"
+
+        self.train_path = self.data_dir / "train_2022_2023_v2.parquet"
+        self.valid_path = self.data_dir / "valid_2024_v2.parquet"
+        self.test_path = self.data_dir / "test_2025_v2.parquet"
+
+        self.train_out = self.data_dir / "train_preprocessed.parquet"
+        self.valid_out = self.data_dir / "valid_preprocessed.parquet"
+        self.test_out = self.data_dir / "test_preprocessed.parquet"
+
+        self.preprocessor_path = self.models_dir / "preprocessor.joblib"
+
+    def run(self) -> dict:
+        """
+        Build, fit, and apply the preprocessing pipeline.
+
+        Returns
+        -------
+        dict with keys:
+            - train_shape : tuple
+            - valid_shape : tuple
+            - test_shape  : tuple
+            - preprocessor_path : str
+        """
+        # 1. Load data
+        print("Loading data...")
+        train_df = pd.read_parquet(self.train_path)
+        valid_df = pd.read_parquet(self.valid_path)
+        test_df = pd.read_parquet(self.test_path)
+
+        # 2. Separate features and target
+        X_train = train_df.drop(columns=[self.TARGET_COL])
+        y_train = train_df[self.TARGET_COL]
+
+        X_valid = valid_df.drop(columns=[self.TARGET_COL])
+        y_valid = valid_df[self.TARGET_COL]
+
+        X_test = test_df.drop(columns=[self.TARGET_COL])
+        y_test = test_df[self.TARGET_COL]
+
+        # 3. Build and fit preprocessor on train only
+        print("Fitting preprocessor on train set...")
+        preprocessor = build_preprocessor()
+        preprocessor.fit(X_train)
+
+        # 4. Transform all three sets
+        print("Transforming all sets...")
+        X_train_t = preprocessor.transform(X_train)
+        X_valid_t = preprocessor.transform(X_valid)
+        X_test_t = preprocessor.transform(X_test)
+
+        # 5. Add target back
+        X_train_t[self.TARGET_COL] = y_train.values
+        X_valid_t[self.TARGET_COL] = y_valid.values
+        X_test_t[self.TARGET_COL] = y_test.values
+
+        # 6. Save preprocessed datasets
+        print("Saving preprocessed datasets...")
+        self.train_out.parent.mkdir(parents=True, exist_ok=True)
+        X_train_t.to_parquet(self.train_out, index=False)
+        X_valid_t.to_parquet(self.valid_out, index=False)
+        X_test_t.to_parquet(self.test_out, index=False)
+
+        # 7. Save fitted preprocessor
+        print("Saving preprocessor...")
+        self.preprocessor_path.parent.mkdir(parents=True, exist_ok=True)
+        joblib.dump(preprocessor, self.preprocessor_path)
+
+        print("Done.")
+        print(f"Train : {X_train_t.shape}")
+        print(f"Valid : {X_valid_t.shape}")
+        print(f"Test  : {X_test_t.shape}")
+        print(f"Preprocessor saved to: {self.preprocessor_path}")
+
+        return {
+            "train_shape": X_train_t.shape,
+            "valid_shape": X_valid_t.shape,
+            "test_shape": X_test_t.shape,
+            "preprocessor_path": str(self.preprocessor_path),
+        }
 
 
 if __name__ == "__main__":
-    main()
+    base = Path(__file__).resolve().parents[2]
+    preprocessor = Preprocessor(base)
+    preprocessor.run()

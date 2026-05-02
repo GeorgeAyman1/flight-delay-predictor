@@ -21,6 +21,9 @@ import numpy as np
 import json
 from pathlib import Path
 
+import mlflow
+from mlflow.tracking import MlflowClient
+
 from sklearn.metrics import (
     classification_report,
     roc_auc_score,
@@ -29,6 +32,7 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     precision_score,
+    ConfusionMatrixDisplay,
 )
 
 # ─────────────────────────────────────────────────────────────
