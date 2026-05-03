@@ -19,7 +19,6 @@ import numpy as np
 import time
 from pathlib import Path
 
-from catboost import CatBoostClassifier  
 from sklearn.ensemble import VotingClassifier
 from sklearn.metrics import (
     classification_report,
@@ -34,7 +33,7 @@ from sklearn.metrics import (
 # ══════════════════════════════════════════════════════════════
 # PATHS
 # ══════════════════════════════════════════════════════════════
-BASE_DIR   = Path(r'C:/Users/VICTUS/Desktop/Engineering/Sem 8/Data Science/flight-delay-predictor')
+BASE_DIR   = Path(__file__).resolve().parents[2]
 DATA_DIR   = BASE_DIR / "data" / "processed"
 MODELS_DIR = BASE_DIR / "models"
 TARGET     = "departure_delayed"
