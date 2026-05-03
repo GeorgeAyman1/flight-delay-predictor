@@ -168,16 +168,3 @@ poetry run pytest --cov=src tests/
 ```
 
 ---
-
-## CI/CD
-
-GitHub Actions workflows are configured in `.github/workflows/`. On every push and pull request to `main`, the pipeline automatically:
-- Installs dependencies via Poetry
-- Runs linting and static analysis
-- Executes the full test suite with coverage reporting
-
----
-
-## Academic Integrity
-
-All work is original. Open-source libraries and public datasets are used with proper citation. This project was developed for **CMPS344 Applied Data Science, Spring 2026**, Cairo University Faculty of Engineering.
