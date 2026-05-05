@@ -224,24 +224,69 @@ class ModelTrainer:
         threshold_map = {}
         models_saved = []
 
-        for name, model, use_scaling, fit_kwargs in model_registry:
-            print(f"  [{name}]")
-            Xtr = X_train_scaled if use_scaling else X_train.values
-            Xva = X_valid_scaled if use_scaling else X_valid.values
+        experiment_name = "flight-delay-baseline"
+        mlflow.set_experiment(experiment_name)
+        experiment = mlflow.get_experiment_by_name(experiment_name)
+        experiment_id = experiment.experiment_id
 
-            t0 = time.time()
-            model.fit(Xtr, y_train, **fit_kwargs)
-            elapsed = time.time() - t0
-            train_times[name] = round(elapsed, 1)
+        with mlflow.start_run(
+            experiment_id=experiment_id, run_name="baseline-comparison"
+        ) as parent_run:
+            for name, model, use_scaling, fit_kwargs in model_registry:
+                print(f"  [{name}]")
 
-            y_proba = model.predict_proba(Xva)[:, 1]
-            thresh = self.best_f1_threshold(y_valid, y_proba)
-            threshold_map[name] = thresh
+                with mlflow.start_run(
+                    experiment_id=experiment_id,
+                    run_name=name,
+                    parent_run_id=parent_run.info.run_id,
+                    nested=True,
+                ):
+                    Xtr = X_train_scaled if use_scaling else X_train.values
+                    Xva = X_valid_scaled if use_scaling else X_valid.values
 
-            save_path = self.models_dir / f"{name}.pkl"
-            with open(save_path, "wb") as f:
-                pickle.dump(model, f)
-            models_saved.append(str(save_path))
+                    # Log Model Params
+                    model_params = model.get_params()
+                    mlflow.log_params(
+                        {str(k): str(v) for k, v in model_params.items()}
+                    )
+
+                    t0 = time.time()
+                    model.fit(Xtr, y_train, **fit_kwargs)
+                    elapsed = time.time() - t0
+                    train_times[name] = round(elapsed, 1)
+                    print(f"    Training time : {elapsed:.1f}s")
+                    mlflow.log_metric("training_time_s", elapsed)
+
+                    y_pred = model.predict(Xva)
+                    y_proba = model.predict_proba(Xva)[:, 1]
+                    
+                    thresh = self.best_f1_threshold(y_valid, y_proba)
+                    threshold_map[name] = thresh
+                    mlflow.log_metric("best_f1_threshold", thresh)
+
+                    mlflow.log_metric("val_roc_auc", roc_auc_score(y_valid, y_proba))
+                    mlflow.log_metric("val_recall", recall_score(y_valid, y_pred))
+                    mlflow.log_metric("val_precision", precision_score(y_valid, y_pred))
+                    mlflow.log_metric("val_f1", f1_score(y_valid, y_pred))
+
+                    # Confusion Matrix Artifact
+                    cm = confusion_matrix(y_valid, y_pred)
+                    fig, ax = plt.subplots(figsize=(5, 4))
+                    ConfusionMatrixDisplay(cm).plot(ax=ax, cmap="Blues")
+                    ax.set_title(f"{name} — Validation Set")
+                    plt.tight_layout()
+
+                    cm_path = self.models_dir / f"cm_{name}.png"
+                    fig.savefig(cm_path)
+                    mlflow.log_artifact(
+                        cm_path.as_posix(), artifact_path="confusion_matrices"
+                    )
+                    plt.close(fig)
+
+                    save_path = self.models_dir / f"{name}.pkl"
+                    with open(save_path, "wb") as f:
+                        pickle.dump(model, f)
+                    models_saved.append(str(save_path))
 
         with open(self.models_dir / "thresholds.json", "w") as f:
             json.dump(threshold_map, f, indent=2)
