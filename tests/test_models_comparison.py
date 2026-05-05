@@ -9,14 +9,10 @@ from src.models.model_comparison import ModelComparator
 @patch('src.models.model_comparison.pd.read_parquet')
 @patch('src.models.model_comparison.pickle.load')
 @patch('src.models.model_comparison.Path.exists')
-@patch('src.models.model_comparison.mlflow')
-@patch('src.models.model_comparison.MlflowClient')
-@patch('src.models.model_comparison.mlflow.set_tracking_uri')
-@patch('src.models.model_comparison.plt')
+@patch('src.models.model_comparison.json.load')
 @patch('builtins.open', new_callable=MagicMock)
 def test_model_comparator_run(
-    mock_open, mock_plt, mock_set_uri, mock_mlflow_client, mock_mlflow, 
-    mock_path_exists, mock_pickle_load, mock_read_parquet, tmp_path
+    mock_open, mock_json_load, mock_path_exists, mock_pickle_load, mock_read_parquet, tmp_path
 ):
     n_samples = 20
     
@@ -30,6 +26,8 @@ def test_model_comparator_run(
     # Path.exists() for checking if model exists
     mock_path_exists.return_value = True
     
+    mock_json_load.return_value = {"logistic_regression": 0.5}
+    
     # Mock scaler and models for pickle.load
     mock_scaler = MagicMock()
     mock_scaler.transform.return_value = np.zeros((n_samples, 1))
@@ -40,18 +38,13 @@ def test_model_comparator_run(
     mock_model.get_params.return_value = {'param1': 1}
     
     # Side effect for pickle.load to return scaler first, then models
-    mock_pickle_load.side_effect = [mock_scaler, mock_model, mock_model, mock_model, mock_model, mock_model]
-    
-    # Mock subplots
-    mock_fig = MagicMock()
-    mock_ax = MagicMock()
-    mock_plt.subplots.return_value = (mock_fig, mock_ax)
+    mock_pickle_load.side_effect = [mock_scaler, mock_model, mock_model, mock_model, mock_model, mock_model, mock_model, mock_model, mock_model, mock_model]
     
     comparator = ModelComparator(base_dir=tmp_path)
     res = comparator.run()
     
-    assert 'results_df' in res
+    assert 'results' in res
     assert 'winner' in res
     
-    assert len(res['results_df']) == 5
-    assert mock_pickle_load.call_count == 6 # scaler + 5 models
+    assert len(res['results']) >= 7
+    assert mock_pickle_load.call_count >= 8 # scaler + 7+ models

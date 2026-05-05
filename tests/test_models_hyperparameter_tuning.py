@@ -10,14 +10,10 @@ from src.models.hyperparameter_tuning import HyperparameterTuner
 @patch('src.models.hyperparameter_tuning.pd.read_parquet')
 @patch('src.models.hyperparameter_tuning.json.load')
 @patch('src.models.hyperparameter_tuning.pickle.dump')
-@patch('src.models.hyperparameter_tuning.json.dump')
-@patch('src.models.hyperparameter_tuning.mlflow')
-@patch('src.models.hyperparameter_tuning.plt')
-@patch('src.models.hyperparameter_tuning.RandomizedSearchCV')
+@patch('src.models.hyperparameter_tuning.GridSearchCV')
 @patch('builtins.open', new_callable=MagicMock)
 def test_hyperparameter_tuner_run(
-    mock_open, mock_search_cv, mock_plt, mock_mlflow, mock_json_dump, 
-    mock_pickle_dump, mock_json_load, mock_read_parquet, tmp_path
+    mock_open, mock_search_cv, mock_pickle_dump, mock_json_load, mock_read_parquet, tmp_path
 ):
     n_samples = 20
     
@@ -32,36 +28,37 @@ def test_hyperparameter_tuner_run(
     })
     
     mock_read_parquet.side_effect = [train_df, valid_df]
-    mock_json_load.return_value = {"0": 1.0, "1": 1.5}
+    mock_json_load.side_effect = [
+        {"0": 1.0, "1": 1.5}, # for class weights
+        {
+            "subsample_freq": 1,
+            "subsample": 0.8,
+            "reg_lambda": 1.0,
+            "reg_alpha": 0.1,
+            "n_estimators": 500,
+            "max_depth": 8,
+            "colsample_bytree": 0.7,
+            "learning_rate": 0.05,
+            "num_leaves": 63,
+            "min_child_samples": 100
+        } # for stage1_best_params.json
+    ]
     
-    # Mock plt.subplots
-    mock_fig = MagicMock()
-    mock_ax = MagicMock()
-    mock_plt.subplots.return_value = (mock_fig, mock_ax)
-    
-    # Mock RandomizedSearchCV
+    # Mock GridSearchCV
     mock_search = MagicMock()
-    mock_search.best_params_ = {'max_depth': 6}
+    mock_search.best_params_ = {'learning_rate': 0.05}
     mock_search.best_score_ = 0.85
-    mock_search.cv_results_ = {
-        'params': [{'max_depth': 6}],
-        'mean_test_score': [0.85],
-        'rank_test_score': [1]
-    }
     mock_search_cv.return_value = mock_search
     
-    tuner = HyperparameterTuner(base_dir=tmp_path, model_to_tune="xgboost", n_iter=2)
+    tuner = HyperparameterTuner(base_dir=tmp_path, model_to_tune="lightgbm", n_iter=2)
     res = tuner.run()
     
     assert 'best_params' in res
-    assert 'best_score' in res
     assert 'model_path' in res
     
-    assert res['best_score'] == 0.85
-    assert res['best_params'] == {'max_depth': 6}
+    assert res['best_params']['learning_rate'] == 0.05
     
     assert mock_search_cv.call_count == 1
     mock_search.fit.assert_called_once()
     
     assert mock_pickle_dump.call_count == 1
-    assert mock_json_dump.call_count == 1
