@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker Image
-        run: docker build -t flight-predictor-test .
+        run: docker build -f dockerfile.test -t flight-predictor-test .
 
       - name: Run Tests in Container
         run: docker run --rm flight-predictor-test poetry run pytest tests/

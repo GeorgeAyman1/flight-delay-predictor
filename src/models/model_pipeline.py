@@ -93,17 +93,13 @@ class ModelPipeline:
         pipeline_results["class_weights"] = weight_calc.run()
 
         # ── STEP 2 — Model Training ─────────────────────────────
-        print("\n" + "█" * 60)
-        print("  PIPELINE STEP 2/5 — MODEL TRAINING")
-        print("█" * 60)
+        print("PIPELINE STEP 2/5 — MODEL TRAINING")
 
         trainer = ModelTrainer(self.base_dir)
         pipeline_results["training"] = trainer.run()
 
         # ── STEP 3 — Model Comparison ────────────────────────────
-        print("\n" + "█" * 60)
-        print("  PIPELINE STEP 3/5 — MODEL COMPARISON")
-        print("█" * 60)
+        print("PIPELINE STEP 3/5 — MODEL COMPARISON")
 
         comparator = ModelComparator(self.base_dir)
         comparison_results = comparator.run()
@@ -111,21 +107,15 @@ class ModelPipeline:
 
         # ── STEP 4 — Weight Comparison (optional) ────────────────
         if self.include_weight_comparison:
-            print("\n" + "█" * 60)
-            print("  PIPELINE STEP 4/5 — WEIGHT COMPARISON (optional)")
-            print("█" * 60)
+            print("PIPELINE STEP 4/5 — WEIGHT COMPARISON (optional)")
 
             analyzer = WeightComparisonAnalyzer(self.base_dir)
             pipeline_results["weight_comparison"] = analyzer.run()
         else:
-            print("\n" + "█" * 60)
-            print("  PIPELINE STEP 4/5 — WEIGHT COMPARISON (skipped)")
-            print("█" * 60)
+            print("PIPELINE STEP 4/5 — WEIGHT COMPARISON (skipped)")
 
         # ── STEP 5 — Hyperparameter Tuning ───────────────────────
-        print("\n" + "█" * 60)
-        print("  PIPELINE STEP 5/5 — HYPERPARAMETER TUNING")
-        print("█" * 60)
+        print("PIPELINE STEP 5/5 — HYPERPARAMETER TUNING")
 
         # If no model specified, use the winner from comparison
         model_to_tune = self.model_to_tune or comparison_results["winner"]
@@ -140,11 +130,9 @@ class ModelPipeline:
         pipeline_results["tuning"] = tuner.run()
 
         # ── DONE ─────────────────────────────────────────────────
-        print("\n" + "█" * 60)
-        print("  PIPELINE COMPLETE ✓")
-        print("█" * 60)
-        print(f"  Winner           : {model_to_tune}")
-        print(f"  Tuned model saved: {pipeline_results['tuning']['model_path']}")
+        print("PIPELINE COMPLETE")
+        print(f"Winner           : {model_to_tune}")
+        print(f"Tuned model saved: {pipeline_results['tuning']['model_path']}")
 
         return pipeline_results
 

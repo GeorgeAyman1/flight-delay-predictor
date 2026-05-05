@@ -142,7 +142,7 @@ print(f"{'=' * 62}")
 ensemble_estimators = [(name, model) for name, model in loaded_models.items()]
 ensemble_weights    = [weights[name] for name, _ in ensemble_estimators]
 
-print(f"\n  Ensemble members:")
+print("\n  Ensemble members:")
 for (name, _), w in zip(ensemble_estimators, ensemble_weights):
     print(f"    {name:<32}  weight={w}")
 
@@ -209,6 +209,6 @@ print(f"  PR-AUC       : {final_metrics['pr_auc']:.4f}")
 print(f"  Recall       : {final_metrics['recall']:.4f}")
 print(f"  F1           : {final_metrics['f1']:.4f}")
 print(f"  Threshold    : {final_metrics['threshold']:.3f}")
-print(f"\n  Saved model  → models/best_tuned_model.pkl")
-print(f"  Saved params → models/best_tuned_params.json")
-print(f"\n  Stage 3 complete ✓")
+print("\n  Saved model  → models/best_tuned_model.pkl")
+print("  Saved params → models/best_tuned_params.json")
+print("\n  Stage 3 complete ✓")

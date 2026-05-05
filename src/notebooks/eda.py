@@ -14,7 +14,6 @@ Usage
 
 import argparse
 import os
-import sys
 from pathlib import Path
 import seaborn as sns
 
@@ -25,7 +24,6 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
-import seaborn as sns
 from matplotlib.patches import Patch
 
 # ── Style ─────────────────────────────────────────────────────────────────────

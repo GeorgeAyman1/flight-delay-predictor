@@ -6,13 +6,6 @@ from pathlib import Path
 
 
 class FeatureSelector:
-    """
-    Applies a multi-stage feature selection pipeline to the engineered features:
-    non-numeric drop, variance threshold, correlation filter, mutual information,
-    and Random Forest importance — with domain overrides for force-keep/force-drop.
-
-    Saves the selected feature files to data/processed/.
-    """
 
     # ── Configuration constants ────────────────────────────────────
     TARGET = "departure_delayed"
