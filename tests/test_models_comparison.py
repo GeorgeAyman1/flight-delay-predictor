@@ -1,7 +1,5 @@
-import pytest
 import pandas as pd
 import numpy as np
-from pathlib import Path
 from unittest.mock import patch, MagicMock
 
 from src.models.model_comparison import ModelComparator

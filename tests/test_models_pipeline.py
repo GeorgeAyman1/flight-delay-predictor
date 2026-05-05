@@ -1,6 +1,4 @@
-import pytest
 from unittest.mock import patch, MagicMock
-from pathlib import Path
 
 from src.models.model_pipeline import ModelPipeline
 

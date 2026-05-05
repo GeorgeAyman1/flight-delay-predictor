@@ -1,9 +1,7 @@
-import pytest
 import pandas as pd
-import numpy as np
 from pathlib import Path
-from datetime import datetime, date
-from unittest.mock import patch, MagicMock
+from datetime import date
+from unittest.mock import patch
 
 from src.features.feature_engineering import FeatureEngineer
 

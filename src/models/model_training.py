@@ -6,7 +6,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 import mlflow
-from mlflow.tracking import MlflowClient
 
 from sklearn.metrics import (
     roc_auc_score,
@@ -25,7 +24,7 @@ from sklearn.ensemble import (
     HistGradientBoostingClassifier,
 )
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import precision_recall_curve, f1_score
+from sklearn.metrics import precision_recall_curve
 from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 

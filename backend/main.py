@@ -19,6 +19,7 @@ Best model    : LightGBM (tuned) — F1 0.4446, ROC-AUC 0.6760, Recall 0.6493
 
 Dataset loaded: data/processed/valid_selected.parquet  (1,314,163 rows, 18 cols)
 """
+# ruff: noqa: E402
 
 import sys
 import json
@@ -38,7 +39,6 @@ from src.features.preprocess import (  # noqa: F401
     SkyC1Encoder,
 )
 
-import numpy as np
 import pandas as pd
 import joblib
 

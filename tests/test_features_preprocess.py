@@ -1,7 +1,6 @@
-import pytest
 import pandas as pd
 import numpy as np
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from pathlib import Path
 
 from src.features.preprocess import (

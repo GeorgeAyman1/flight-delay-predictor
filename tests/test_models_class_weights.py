@@ -1,8 +1,6 @@
-import pytest
 import pandas as pd
 import json
-from pathlib import Path
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 from src.models.class_weights import ClassWeightCalculator
 

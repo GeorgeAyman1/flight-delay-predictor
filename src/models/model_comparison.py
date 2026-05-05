@@ -1,11 +1,9 @@
 import pandas as pd
 import pickle
-import numpy as np
 import json
 from pathlib import Path
 
 from sklearn.metrics import (
-    classification_report,
     roc_auc_score,
     average_precision_score,
     f1_score,
